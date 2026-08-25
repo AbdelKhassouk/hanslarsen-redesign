@@ -585,21 +585,24 @@ omos_html = (
 <!-- HISTORIEN -->
 <section aria-labelledby="historie-title">
   <div class="container">
-    <div class="split">
-      <div class="split-media wide reveal-left">
+    <div class="section-head reveal" style="margin-bottom: 32px;">
+      <span class="section-tag">Historien</span>
+      <h2 id="historie-title" class="section-title" style="margin-top: 8px;">Solidt håndværk i to generationer</h2>
+    </div>
+    <figure class="photo-figure reveal">
+      <div class="photo-band">
         <img src="images/hold.jpg" alt="Hele holdet fra Malerfirmaet Hans Larsen samlet foran firmaets biler på Erantisvej i Næstved" loading="lazy" width="1260" height="900">
         <div class="media-badge">
           <div class="num">1947</div>
           <div class="label">Grundlagt</div>
         </div>
       </div>
-      <div class="split-content reveal-right">
-        <span class="section-tag">Historien</span>
-        <h2 id="historie-title" class="section-title" style="margin-top: 6px; margin-bottom: 18px;">Solidt håndværk i to generationer</h2>
-        <p>Malerfirmaet Hans Larsen ApS er et af byens ældste malerfirmaer. Firmaet blev grundlagt helt tilbage i 1947 og bygger på nøjagtig samme vision som ved den spæde start: at sætte kunden i centrum med solidt håndværk, som udvikler sig i linje med samfundet.</p>
-        <p>I dag drives firmaet med 70 malere af Malermester Morten Larsen, som har overtaget tøjlerne fra sin far, Malermester Hans Larsen.</p>
-        <p>De lokale opgaver varetages af konduktørerne Allan Christiansson og Rikke Mini Nielsen, mens Malermester Morten Larsen står for det øvrige.</p>
-      </div>
+      <figcaption class="photo-caption">Hele holdet samlet foran Erantisvej 49 i Næstved.</figcaption>
+    </figure>
+    <div class="prose-2col reveal">
+      <p>Malerfirmaet Hans Larsen ApS er et af byens ældste malerfirmaer. Firmaet blev grundlagt helt tilbage i 1947 og bygger på nøjagtig samme vision som ved den spæde start: at sætte kunden i centrum med solidt håndværk, som udvikler sig i linje med samfundet.</p>
+      <p>I dag drives firmaet med 70 malere af Malermester Morten Larsen, som har overtaget tøjlerne fra sin far, Malermester Hans Larsen.</p>
+      <p>De lokale opgaver varetages af konduktørerne Allan Christiansson og Rikke Mini Nielsen, mens Malermester Morten Larsen står for det øvrige.</p>
     </div>
   </div>
 </section>
