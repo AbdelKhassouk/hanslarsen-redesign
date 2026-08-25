@@ -1,2 +1,3 @@
-# Local preview build used for screenshots — not part of the site
 _preview/
+__pycache__/
+*.pyc
