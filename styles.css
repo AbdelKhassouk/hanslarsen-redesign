@@ -1077,9 +1077,9 @@ section.green-band {
 }
 .photo-band img {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 5 / 2;
   object-fit: cover;
-  object-position: center 46%;
+  object-position: center 45%;
   display: block;
 }
 .photo-caption {
@@ -1105,7 +1105,7 @@ section.green-band {
 
 @media (max-width: 860px) {
   .prose-2col { columns: 1; column-gap: 0; margin-top: 32px; }
-  .photo-band img { aspect-ratio: 4 / 3; }
+  .photo-band img { aspect-ratio: auto; }
 }
 
 /* ============ MOBILE POLISH ============ */
