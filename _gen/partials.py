@@ -271,10 +271,16 @@ FOOTER = '''
     </div>
     <div class="footer-bottom">
       <div class="footer-meta">© 1947—2026 Malerfirmaet Hans Larsen · CVR 79099716</div>
-      <a href="https://malermestre.dk/" target="_blank" rel="noopener" class="footer-link">
-        Medlem af Danske Malermestre
-        %s
-      </a>
+      <div class="footer-badges">
+        <a href="https://www.handverksgruppen.com/da" target="_blank" rel="noopener" class="footer-hg" title="Vi er en del af Håndverksgruppen">
+          <span>En del af</span>
+          <img src="images/handverksgruppen-hvid.svg" alt="Håndverksgruppen" width="943" height="248" loading="lazy" />
+        </a>
+        <a href="https://malermestre.dk/" target="_blank" rel="noopener" class="footer-link">
+          Medlem af Danske Malermestre
+          %s
+        </a>
+      </div>
     </div>
   </div>
 </footer>
@@ -283,6 +289,84 @@ FOOTER = '''
 </body>
 </html>
 ''' % (svg(IC_PIN), svg(IC_PHONE), svg(IC_MAIL), svg(IC_EXT, 11, '3'))
+
+
+# ------------------------------------------------- Håndverksgruppen ------
+# Facts below come from Håndverksgruppen's own press release about the
+# acquisition and from handverksgruppen.com/da (2025 figures).
+HG_URL = 'https://www.handverksgruppen.com/da'
+HG_QUOTE = ('Vi ser Håndverksgruppen som en uvurderlig partner i vores fortsatte '
+            'udvikling. Branchen stiller øgede krav til rapportering og compliance, '
+            'og det at kunne drage nytte af deres ressourcer og kompetencedeling er '
+            'afgørende for at sikre det, vi har bygget op gennem årene.')
+HG_FACTS = [
+    ('160+', 'virksomheder'),
+    ('4.700', 'medarbejdere'),
+    ('4', 'lande'),
+    ('1947', 'stadig samme firma'),
+]
+
+
+def hg_section():
+    """The full 'En del af Håndverksgruppen' section (Om os)."""
+    facts = '\n'.join(
+        '          <li>\n'
+        '            <strong>%s</strong>\n'
+        '            <span>%s</span>\n'
+        '          </li>' % (num, label) for num, label in HG_FACTS)
+    return '''
+<!-- HÅNDVERKSGRUPPEN -->
+<section class="hg-band" aria-labelledby="hg-title">
+  <div class="container">
+    <div class="split">
+      <div class="split-content reveal-left">
+        <span class="hg-tag">Del af en større koncern</span>
+        <h2 id="hg-title" class="section-title" style="margin-top: 6px; margin-bottom: 18px;">En del af Håndverksgruppen</h2>
+        <p>Malerfirmaet Hans Larsen er blevet en del af Håndverksgruppen — Nordens ledende koncern inden for overflader, med over 160 virksomheder og 4.700 medarbejdere i Norge, Sverige, Danmark og Tyskland.</p>
+        <p>Det ændrer ikke på, hvem der tager telefonen. Firmaet drives videre som hidtil af Malermester Morten Larsen og de samme folk, på den samme adresse. Til gengæld får vi adgang til flere rammeaftaler, stærkere faglig udvikling og mere robuste rammer om driften — og dermed en tryggere fremtid for vores medarbejdere.</p>
+        <blockquote class="hg-quote">
+          <p>„%s”</p>
+          <cite>Morten Larsen, Malermester</cite>
+        </blockquote>
+        <a href="%s" target="_blank" rel="noopener" class="btn btn-hg" style="margin-top: 20px;">
+          Læs mere om Håndverksgruppen
+          %s
+        </a>
+      </div>
+      <div class="hg-card reveal-right">
+        <img src="images/handverksgruppen.svg" alt="Håndverksgruppen" width="943" height="248" loading="lazy">
+        <p class="hg-card-lead">Nordens ledende koncern inden for overflader — maler, gulv, flise og murer.</p>
+        <ul class="hg-facts">
+%s
+        </ul>
+        <p class="hg-card-note">Håndverksgruppen er ISO 9001-, 14001- og 45001-certificeret. De lokale virksomheder drives videre under eget navn og egen ledelse.</p>
+      </div>
+    </div>
+  </div>
+</section>
+''' % (HG_QUOTE, HG_URL, svg(IC_EXT, 13, '3'), facts)
+
+
+def hg_strip():
+    """Compact one-line mention for the front page."""
+    return '''
+<!-- HÅNDVERKSGRUPPEN -->
+<section class="compact hg-band" aria-labelledby="hg-strip-title">
+  <div class="container">
+    <div class="hg-strip reveal">
+      <img src="images/handverksgruppen.svg" alt="Håndverksgruppen" width="943" height="248" loading="lazy">
+      <div class="hg-strip-text">
+        <h2 id="hg-strip-title">En del af Håndverksgruppen</h2>
+        <p>Nordens ledende koncern inden for overflader — over 160 virksomheder i Norge, Sverige, Danmark og Tyskland. Samme folk, samme adresse, samme telefonnummer.</p>
+      </div>
+      <a href="om-os.html#hg-title" class="btn btn-hg">
+        Læs mere
+        %s
+      </a>
+    </div>
+  </div>
+</section>
+''' % svg(IC_ARROW)
 
 
 MAP_IFRAME = '''<iframe
@@ -314,55 +398,33 @@ def contact_info_list(extra_style=''):
     return '        <ul class="contact-info-list"%s>\n%s\n        </ul>' % (extra_style, items)
 
 
-def form_card():
-    return '''      <div class="form-card reveal-right">
-        <div id="formContent">
-          <h2>Vi ringer dig op</h2>
-          <p>Udfyld formularen — så ringer vi dig op inden for 24 timer på hverdage.</p>
-          <form id="contactForm" name="kontaktformular">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="name">Navn *</label>
-                <input type="text" id="name" name="name" required placeholder="Dit fulde navn" autocomplete="name">
-              </div>
-              <div class="form-group">
-                <label for="phone">Telefon *</label>
-                <input type="tel" id="phone" name="phone" required placeholder="55 72 35 86" autocomplete="tel">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="email">E-mail</label>
-              <input type="email" id="email" name="email" placeholder="dig@email.dk" autocomplete="email">
-            </div>
-            <div class="form-group">
-              <label for="type">Type opgave</label>
-              <select id="type" name="type">
-                <option value="">Vælg...</option>
-                <option>Privat</option>
-                <option>Virksomhed</option>
-                <option>Entreprise</option>
-                <option>Andet</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="message">Beskriv kort hvad det handler om</label>
-              <textarea id="message" name="message" placeholder="Fx: indvendig maling af stue og køkken, ca. 50 m²..."></textarea>
-            </div>
-            <button type="submit" class="form-submit">
-              Send forespørgsel
-              %s
-            </button>
-            <p class="form-disclaimer">Vi ringer dig op inden for 24 timer på hverdage. Dine oplysninger bruges kun til at besvare din forespørgsel.</p>
-          </form>
-        </div>
-        <div class="form-success" id="formSuccess" role="status" aria-live="polite">
-          <div class="form-success-icon">
+def contact_cta(heading_id='cta-title'):
+    """Direct contact card. Replaces the old form -- the client does not want
+    enquiries arriving through a web form."""
+    points = [
+        'Uforpligtende tilbud',
+        'Vi kigger gerne forbi og ser på opgaven',
+        'Private, virksomheder og entrepriser',
+    ]
+    li = '\n'.join('          <li>%s<span>%s</span></li>' % (svg(IC_CHECK, 16, '2.5'), p)
+                   for p in points)
+    return '''      <div class="contact-cta reveal-right">
+        <h2 id="%s">Ring eller skriv til os</h2>
+        <p>Vi sidder ved telefonen mandag til fredag, 7:00 — 16:00. Skal du fat i en bestemt, står de direkte numre hos den enkelte her på siden.</p>
+        <div class="contact-cta-actions">
+          <a href="tel:+4555723586" class="btn btn-block">
             %s
-          </div>
-          <h2>Tak for din henvendelse!</h2>
-          <p>Vi har modtaget din forespørgsel og ringer dig op inden for 24 timer på hverdage.</p>
+            55 72 35 86
+          </a>
+          <a href="mailto:maler@hanslarsen.dk" class="btn btn-ghost btn-block">
+            %s
+            maler@hanslarsen.dk
+          </a>
         </div>
-      </div>''' % (svg(IC_ARROW), svg(IC_CHECK, 26))
+        <ul class="contact-cta-points">
+%s
+        </ul>
+      </div>''' % (heading_id, svg(IC_PHONE, 16), svg(IC_MAIL, 16), li)
 
 
 # --------------------------------------------------- grøn omstilling ------

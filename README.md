@@ -34,6 +34,27 @@ Freddy og Katrine har et "Foto på vej"-felt med initialer, indtil billederne
 er taget. Katrine stod ikke i den udleverede rækkefølge, så hun er sat sidst
 — sig til, hvis hun skal et andet sted hen.
 
+## En del af Håndverksgruppen
+
+Firmaet er en del af **Håndverksgruppen** — Nordens ledende koncern inden for
+overflader, med over 160 virksomheder og 4.700 medarbejdere i Norge, Sverige,
+Danmark og Tyskland. Det står nu tre steder: en stribe på forsiden, en fuld
+sektion på "Om os" med tal og citat fra Morten Larsen, og et logo i footeren
+på alle sider.
+
+> Navnet staves **Håndverksgruppen** med *v* — det er koncernens egen
+> stavemåde, også på deres danske sider.
+
+Tal og citat kommer fra Håndverksgruppens pressemeddelelse om opkøbet og fra
+[handverksgruppen.com](https://www.handverksgruppen.com/da). Citatet bør lige
+godkendes af Morten, før siden går live.
+
+## Ingen kontaktformular
+
+Formularen er fjernet på kundens ønske. I stedet står der et
+"Ring eller skriv til os"-kort med hovednummer og mail — og hver medarbejder
+har sit eget direkte nummer på sit kort.
+
 ## Rediger teamet
 
 Medarbejderne står på alle tre sider og skal være ens. Ret dem ét sted:

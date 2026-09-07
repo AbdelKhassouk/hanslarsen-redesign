@@ -6,7 +6,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from partials import (SITE, TOPBAR, FOOTER, MAP_IFRAME, TEAM, svg, nav, head,
-                      team_section, contact_info_list, form_card, groen_section,
+                      team_section, contact_info_list, contact_cta, groen_section,
+                      hg_section, hg_strip,
                       IC_ARROW, IC_PHONE, IC_CHECK, IC_SHIELD, IC_HEART,
                       IC_USERS, IC_CHAT, IC_HANDSHAKE)
 
@@ -254,8 +255,14 @@ INDEX_LD = '''<!-- Structured Data: LocalBusiness -->
     { "@type": "AdministrativeArea", "name": "Sjælland" },
     { "@type": "City", "name": "København" }
   ],
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "Håndverksgruppen",
+    "url": "https://www.handverksgruppen.com/da"
+  },
   "sameAs": [
-    "https://malermestre.dk/"
+    "https://malermestre.dk/",
+    "https://www.handverksgruppen.com/da"
   ]
 }
 </script>
@@ -327,6 +334,8 @@ index_html = (
         '        <div class="stat-num">%s</div>\n'
         '        <div class="stat-label">%s</div>\n'
         '      </div>' % (n, l) for n, l in STATS)
+    # ---- del af Håndverksgruppen ----------------------------------------
+    + hg_strip()
     # ---- om os glimpse ---------------------------------------------------
     + '''
 <!-- OM OS -->
@@ -393,7 +402,7 @@ index_html = (
     <div class="section-head center reveal">
       <span class="section-tag">Kontakt</span>
       <h2 id="contact-title" class="section-title" style="margin-top: 8px;">Skal vi kigge forbi?</h2>
-      <p>Udfyld formularen, så ringer vi dig op inden for 24 timer — eller giv os et kald direkte.</p>
+      <p>Giv os et kald eller send en mail — så vender vi tilbage hurtigst muligt.</p>
     </div>
     <div class="contact-front-grid">
       <div class="reveal-left">
@@ -409,7 +418,7 @@ index_html = (
 </section>
 
 </main>
-''' % (contact_info_list(' style="margin-top: 0;"'), MAP_IFRAME, form_card())
+''' % (contact_info_list(' style="margin-top: 0;"'), MAP_IFRAME, contact_cta('forside-cta'))
     + FOOTER)
 
 # ============================================================= OM OS ======
@@ -563,8 +572,8 @@ AMO_VALUES = [
 omos_html = (
     head(
         title='Om os — Malerfirmaet Hans Larsen | Næstved siden 1947',
-        desc='Læs om Malerfirmaet Hans Larsen — et af Næstveds ældste malerfirmaer. Grundlagt 1947 og drevet af Malermester Morten Larsen med 70 ansatte malere.',
-        keywords='om hans larsen, malerfirma næstved historie, morten larsen malermester, malerfirma siden 1947, arbejdsmiljø malerfirma',
+        desc='Læs om Malerfirmaet Hans Larsen — et af Næstveds ældste malerfirmaer. Grundlagt 1947, drevet af Malermester Morten Larsen med 70 ansatte malere og en del af Håndverksgruppen.',
+        keywords='om hans larsen, malerfirma næstved historie, morten larsen malermester, malerfirma siden 1947, arbejdsmiljø malerfirma, håndverksgruppen',
         canonical=SITE + '/om-os/',
         og_title='Om os — Malerfirmaet Hans Larsen',
         og_desc='Et af Næstveds ældste malerfirmaer. Grundlagt 1947 og drevet af Malermester Morten Larsen.',
@@ -630,6 +639,8 @@ omos_html = (
         '        </div>\n'
         '      </div>' % (svg(icon, 20, '2'), title, body)
         for icon, title, body in VALUES)
+    # ---- del af Håndverksgruppen ----------------------------------------
+    + hg_section()
     # ---- grøn omstilling -------------------------------------------------
     + groen_section('images/elbil-front.jpg',
                     'Malerfirmaet Hans Larsens hvide elvarebil set forfra',
@@ -759,11 +770,11 @@ KONTAKT_TEAM_LD = '''<script type="application/ld+json">
 kontakt_html = (
     head(
         title='Kontakt — Malerfirmaet Hans Larsen | Næstved',
-        desc='Kontakt Malerfirmaet Hans Larsen i Næstved. Få et uforpligtende tilbud, find direkte numre på malermester, konduktører, formænd og kontor — eller find vores adresse på Erantisvej 49.',
+        desc='Kontakt Malerfirmaet Hans Larsen i Næstved. Ring direkte til malermester, konduktører, formænd eller kontor — se alle direkte numre og vores adresse på Erantisvej 49.',
         keywords='kontakt malerfirma næstved, hans larsen kontakt, malermester morten larsen, tilbud malerfirma, telefonnummer malerfirma næstved',
         canonical=SITE + '/kontakt/',
         og_title='Kontakt — Malerfirmaet Hans Larsen',
-        og_desc='Få et uforpligtende tilbud fra Malerfirmaet Hans Larsen. Vi ringer dig op inden for 24 timer.',
+        og_desc='Ring direkte til den, opgaven hører til. Se alle direkte numre hos Malerfirmaet Hans Larsen i Næstved.',
         ld=KONTAKT_LD + KONTAKT_TEAM_LD)
     + TOPBAR
     + nav('kontakt.html')
@@ -774,7 +785,7 @@ kontakt_html = (
   <div class="container">
     <span class="page-tag">Kontakt</span>
     <h1>Lad os tale sammen</h1>
-    <p>Ring direkte til den, opgaven hører til — eller udfyld formularen, så ringer vi dig op inden for 24 timer.</p>
+    <p>Ring direkte til den, opgaven hører til — eller giv os et kald på hovednummeret, så finder vi den rette.</p>
   </div>
 </section>
 '''
@@ -782,7 +793,7 @@ kontakt_html = (
     + team_section(alt=False)
     # ---- form + info -----------------------------------------------------
     + '''
-<!-- FORMULAR OG ADRESSE -->
+<!-- KONTAKT OG ADRESSE -->
 <section class="alt" aria-labelledby="skriv-title">
   <div class="container">
     <div class="contact-grid">
@@ -813,7 +824,7 @@ kontakt_html = (
 </section>
 
 </main>
-''' % (contact_info_list(), form_card(), MAP_IFRAME)
+''' % (contact_info_list(), contact_cta('kontakt-cta'), MAP_IFRAME)
     + FOOTER)
 
 print('Writing pages:')

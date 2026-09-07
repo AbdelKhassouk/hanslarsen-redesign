@@ -66,17 +66,32 @@ Freddy Sørensen og Katrine Lund mangler foto.
   4. Kør python _gen/build.py
 
 
-KONTAKTFORMULAR
----------------
-Formularen viser en kvittering, men sender ikke e-mail af sig selv.
-For at få den til at sende:
+INGEN KONTAKTFORMULAR
+---------------------
+Siden har med vilje ingen formular. Kunder skal ringe eller skrive
+direkte — hovednummeret og mailen står i toppen, i bunden og i
+"Ring eller skriv til os"-kortet på forsiden og kontaktsiden.
+Hver medarbejder har desuden sit eget direkte nummer på sit kort.
 
-  - Formspree (formspree.io) — gratis op til 50 mails/måned
-  - Web3Forms (web3forms.com) — gratis
-  - Eller jeres egen mailserver
 
-Se kommentaren i script.js under "Form submit handler" — der ligger et
-færdigt eksempel, der bare skal have et ID sat ind.
+HÅNDVERKSGRUPPEN
+----------------
+Firmaet er en del af Håndverksgruppen. Det står tre steder:
+
+  - Forsiden: en smal stribe under nøgletallene
+  - Om os:    sektionen "En del af Håndverksgruppen" med tal og citat
+  - Footeren: "EN DEL AF"-logo på alle tre sider
+
+Logoet ligger i to udgaver:
+  images/handverksgruppen.svg        til lys baggrund
+  images/handverksgruppen-hvid.svg   til den mørke footer
+
+NB: navnet staves "Håndverksgruppen" med v — ikke "Håndværksgruppen".
+Sådan staver koncernen selv, også på deres danske sider.
+
+Tal og citat i sektionen kommer fra Håndverksgruppens egen
+pressemeddelelse om opkøbet og fra handverksgruppen.com/da.
+Ret dem i _gen/partials.py (HG_QUOTE og HG_FACTS), hvis de ændrer sig.
 
 
 SÅDAN LÆGGER DU DEN ONLINE

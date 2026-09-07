@@ -77,32 +77,6 @@
     });
   }
 
-  // ===== Form submit handler =====
-  const form = document.getElementById('contactForm');
-  if (form) {
-    const formContent = document.getElementById('formContent');
-    const formSuccess = document.getElementById('formSuccess');
-
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      // In production, replace with real backend (e.g. Formspree, Web3Forms, or own server)
-      // Example for Formspree:
-      // fetch('https://formspree.io/f/YOUR_ID', {
-      //   method: 'POST',
-      //   body: new FormData(form),
-      //   headers: { Accept: 'application/json' }
-      // }).then(...)
-      
-      if (formContent) formContent.style.display = 'none';
-      if (formSuccess) formSuccess.classList.add('active');
-      
-      // Scroll to success message
-      if (formSuccess) {
-        formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    });
-  }
-
   // ===== Smooth scroll for in-page anchors =====
   document.querySelectorAll('a[href^="#"]').forEach(function(link) {
     link.addEventListener('click', function(e) {
