@@ -7,6 +7,7 @@ FILER
 -----
   index.html            Forside
   om-os.html            Om os
+  groen-omstilling.html Grøn omstilling
   kontakt.html          Kontakt
   styles.css            Styling (delt på alle sider)
   script.js             Menu, animationer, formular (delt på alle sider)
@@ -79,8 +80,9 @@ HÅNDVERKSGRUPPEN
 Firmaet er en del af Håndverksgruppen. Det står tre steder:
 
   - Forsiden: en smal stribe under nøgletallene
-  - Om os:    sektionen "En del af Håndverksgruppen" med tal og citat
-  - Footeren: "EN DEL AF"-logo på alle tre sider
+  - Om os:    sektionen "Håndverksgruppen" med kundens egen tekst
+              plus et faktakort med tal fra koncernen
+  - Footeren: "EN DEL AF"-logo på alle sider
 
 Logoet ligger i to udgaver:
   images/handverksgruppen.svg        til lys baggrund
@@ -89,9 +91,23 @@ Logoet ligger i to udgaver:
 NB: navnet staves "Håndverksgruppen" med v — ikke "Håndværksgruppen".
 Sådan staver koncernen selv, også på deres danske sider.
 
-Tal og citat i sektionen kommer fra Håndverksgruppens egen
-pressemeddelelse om opkøbet og fra handverksgruppen.com/da.
-Ret dem i _gen/partials.py (HG_QUOTE og HG_FACTS), hvis de ændrer sig.
+Brødteksten er kundens egen, ordret. Tallene på faktakortet kommer fra
+handverksgruppen.com/da — ret dem i _gen/partials.py (HG_FACTS), hvis
+de ændrer sig.
+
+
+GRØN OMSTILLING
+---------------
+Grøn omstilling har sin egen side, groen-omstilling.html, fordi
+indholdet er vokset til at rumme arbejdsgange, dokumentation (EPD,
+DGNB) og referenceprojekter.
+
+Referenceprojekterne står i listen REFERENCER i _gen/build.py.
+De indeholder med vilje kun projektnavnet — og for Stenlængegård
+kundens egen tilføjelse om svanemærket byggeri. Skal der stå mere om
+et projekt, skal teksten komme fra jer, ikke gættes.
+
+Forsiden har en kort teaser, der linker videre til siden.
 
 
 SÅDAN LÆGGER DU DEN ONLINE

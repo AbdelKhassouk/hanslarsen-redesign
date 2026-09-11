@@ -9,6 +9,7 @@ uploades direkte til webserveren, som de ligger.
 |---|---|
 | Forside | [index.html](index.html) |
 | Om os | [om-os.html](om-os.html) |
+| Grøn omstilling | [groen-omstilling.html](groen-omstilling.html) |
 | Kontakt | [kontakt.html](kontakt.html) |
 
 ## Hvad er nyt
@@ -34,20 +35,30 @@ Freddy og Katrine har et "Foto på vej"-felt med initialer, indtil billederne
 er taget. Katrine stod ikke i den udleverede rækkefølge, så hun er sat sidst
 — sig til, hvis hun skal et andet sted hen.
 
+## Grøn omstilling
+
+Grøn omstilling har fået sin egen side og sit eget punkt i menuen — indholdet
+rummer nu arbejdsgange, dokumentation (EPD, DGNB) og tre referenceprojekter,
+og det er for meget til en sektion. Forsiden har en kort teaser, der linker
+videre.
+
+Referenceprojekterne står i `REFERENCER` i `_gen/build.py` og indeholder
+**kun projektnavnet** — plus kundens egen tilføjelse om at Stenlængegård er
+svanemærket byggeri. Skal der stå mere om et projekt, skal teksten komme fra
+jer; den skal ikke gættes.
+
 ## En del af Håndverksgruppen
 
-Firmaet er en del af **Håndverksgruppen** — Nordens ledende koncern inden for
-overflader, med over 160 virksomheder og 4.700 medarbejdere i Norge, Sverige,
-Danmark og Tyskland. Det står nu tre steder: en stribe på forsiden, en fuld
-sektion på "Om os" med tal og citat fra Morten Larsen, og et logo i footeren
-på alle sider.
+Firmaet er en del af **Håndverksgruppen**. Det står tre steder: en stribe på
+forsiden, en fuld sektion på "Om os", og et logo i footeren på alle sider.
+Brødteksten er kundens egen, ordret.
 
 > Navnet staves **Håndverksgruppen** med *v* — det er koncernens egen
 > stavemåde, også på deres danske sider.
 
-Tal og citat kommer fra Håndverksgruppens pressemeddelelse om opkøbet og fra
-[handverksgruppen.com](https://www.handverksgruppen.com/da). Citatet bør lige
-godkendes af Morten, før siden går live.
+Tallene på faktakortet (160+ virksomheder, 4.700 medarbejdere, 4 lande) kommer
+fra [handverksgruppen.com](https://www.handverksgruppen.com/da/) og er det
+eneste på siden, der ikke er kundens egen formulering.
 
 ## Ingen kontaktformular
 

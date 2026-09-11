@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Shared building blocks for the three static pages of hanslarsen.dk.
 
-Run _gen/build.py to regenerate index.html, om-os.html and kontakt.html.
+Run _gen/build.py to regenerate the four pages of the site.
 The generated files are plain hand-editable HTML; this generator only exists
 so the header, nav, footer and the team grid cannot drift apart between pages.
 """
@@ -223,12 +223,14 @@ def nav(active):
 %s
 %s
 %s
+%s
       <li><a href="kontakt.html" class="nav-cta">Få et tilbud</a></li>
     </ul>
   </div>
 </nav>
 ''' % (svg(IC_MENU, 24, cls='icon-open'), svg(IC_CLOSE, 24, cls='icon-close'),
        item('index.html', 'Forside'), item('om-os.html', 'Om os'),
+       item('groen-omstilling.html', 'Grøn omstilling'),
        item('kontakt.html', 'Kontakt'))
 
 
@@ -248,6 +250,7 @@ FOOTER = '''
         <ul class="footer-list">
           <li><a href="index.html">Forside</a></li>
           <li><a href="om-os.html">Om os</a></li>
+          <li><a href="groen-omstilling.html">Grøn omstilling</a></li>
           <li><a href="kontakt.html">Kontakt</a></li>
         </ul>
       </div>
@@ -292,13 +295,9 @@ FOOTER = '''
 
 
 # ------------------------------------------------- Håndverksgruppen ------
-# Facts below come from Håndverksgruppen's own press release about the
-# acquisition and from handverksgruppen.com/da (2025 figures).
-HG_URL = 'https://www.handverksgruppen.com/da'
-HG_QUOTE = ('Vi ser Håndverksgruppen som en uvurderlig partner i vores fortsatte '
-            'udvikling. Branchen stiller øgede krav til rapportering og compliance, '
-            'og det at kunne drage nytte af deres ressourcer og kompetencedeling er '
-            'afgørende for at sikre det, vi har bygget op gennem årene.')
+# Body copy is the client's own wording, used verbatim. The figures on the
+# fact card come from handverksgruppen.com/da (2025).
+HG_URL = 'https://www.handverksgruppen.com/da/'
 HG_FACTS = [
     ('160+', 'virksomheder'),
     ('4.700', 'medarbejdere'),
@@ -321,13 +320,12 @@ def hg_section():
     <div class="split">
       <div class="split-content reveal-left">
         <span class="hg-tag">Del af en større koncern</span>
-        <h2 id="hg-title" class="section-title" style="margin-top: 6px; margin-bottom: 18px;">En del af Håndverksgruppen</h2>
-        <p>Malerfirmaet Hans Larsen er blevet en del af Håndverksgruppen — Nordens ledende koncern inden for overflader, med over 160 virksomheder og 4.700 medarbejdere i Norge, Sverige, Danmark og Tyskland.</p>
-        <p>Det ændrer ikke på, hvem der tager telefonen. Firmaet drives videre som hidtil af Malermester Morten Larsen og de samme folk, på den samme adresse. Til gengæld får vi adgang til flere rammeaftaler, stærkere faglig udvikling og mere robuste rammer om driften — og dermed en tryggere fremtid for vores medarbejdere.</p>
-        <blockquote class="hg-quote">
-          <p>„%s”</p>
-          <cite>Morten Larsen, Malermester</cite>
-        </blockquote>
+        <h2 id="hg-title" class="section-title" style="margin-top: 6px; margin-bottom: 18px;">Håndverksgruppen</h2>
+        <p>Malermester Hans Larsen ApS er blevet en del af Håndverksgruppen, hvilket giver os mulighed for at kombinere vores stærke lokale forankring med fordelene ved at være en del af noget større.</p>
+        <p>For os handler det ikke kun om størrelse, men om fællesskab, udvikling og samarbejde. Som en del af Håndverksgruppen får vi adgang til et stærkt netværk af faglige kompetencer, erfaringsudveksling og udviklingsmuligheder, som styrker både vores virksomhed og vores medarbejdere.</p>
+        <p>Vi bevarer vores lokale identitet, værdier og tætte relation til kunderne, samtidig med at vi får sparring og støtte fra et fællesskab af virksomheder, der deler de samme høje ambitioner for kvalitet, arbejdsmiljø og faglig stolthed.</p>
+        <p>For vores medarbejdere betyder det flere muligheder for uddannelse, kompetenceudvikling og videndeling på tværs af organisationen. For vores kunder betyder det en stærk samarbejdspartner med lokal nærhed, høj faglighed og adgang til ressourcer og erfaring fra et større fællesskab.</p>
+        <p>Vi ser medlemskabet af Håndverksgruppen som en investering i fremtiden – til gavn for både medarbejdere, kunder og virksomheden som helhed.</p>
         <a href="%s" target="_blank" rel="noopener" class="btn btn-hg" style="margin-top: 20px;">
           Læs mere om Håndverksgruppen
           %s
@@ -344,7 +342,7 @@ def hg_section():
     </div>
   </div>
 </section>
-''' % (HG_QUOTE, HG_URL, svg(IC_EXT, 13, '3'), facts)
+''' % (HG_URL, svg(IC_EXT, 13, '3'), facts)
 
 
 def hg_strip():
@@ -357,7 +355,7 @@ def hg_strip():
       <img src="images/handverksgruppen.svg" alt="Håndverksgruppen" width="943" height="248" loading="lazy">
       <div class="hg-strip-text">
         <h2 id="hg-strip-title">En del af Håndverksgruppen</h2>
-        <p>Nordens ledende koncern inden for overflader — over 160 virksomheder i Norge, Sverige, Danmark og Tyskland. Samme folk, samme adresse, samme telefonnummer.</p>
+        <p>Vi kombinerer vores stærke lokale forankring med fordelene ved at være en del af noget større — et fællesskab af over 160 virksomheder i Norge, Sverige, Danmark og Tyskland.</p>
       </div>
       <a href="om-os.html#hg-title" class="btn btn-hg">
         Læs mere
@@ -428,12 +426,13 @@ def contact_cta(heading_id='cta-title'):
 
 
 # --------------------------------------------------- grøn omstilling ------
-def groen_section(img, alt, reverse=False):
-    rev = ' reverse' if reverse else ''
+# The full story lives on groen-omstilling.html. This is the teaser that
+# points at it from the front page.
+def groen_teaser():
     points = [
-        'Elbiler i vognparken — vi kører ud til opgaverne uden udstødning.',
-        'Mindre støj og os i boligkvarterer og på indendørs arbejdspladser.',
-        'Grøn omstilling som en del af den daglige drift — ikke som en kampagne.',
+        'Materialer med lavere miljøpåvirkning, dokumenteret med EPD',
+        'Effektiv planlægning, der minimerer spild og unødvendig transport',
+        'Erfaring fra svanemærket byggeri og DGNB-certificerede projekter',
     ]
     li = '\n'.join('          <li>%s<span>%s</span></li>' % (svg(IC_CHECK, 17, '2.5'), p)
                    for p in points)
@@ -441,9 +440,9 @@ def groen_section(img, alt, reverse=False):
 <!-- GRØN OMSTILLING -->
 <section class="green-band" aria-labelledby="groen-title">
   <div class="container">
-    <div class="split%s">
+    <div class="split reverse">
       <div class="split-media portrait reveal-left">
-        <img src="%s" alt="%s" loading="lazy" width="900" height="1200">
+        <img src="images/elbil-bag.jpg" alt="Grøn elvarebil med teksten „Vi maler byen grøn — fordi vi værdsætter miljøet”" loading="lazy" width="900" height="1200">
         <div class="media-badge green">
           <div class="num">EL</div>
           <div class="label">Vognpark</div>
@@ -452,14 +451,25 @@ def groen_section(img, alt, reverse=False):
       <div class="split-content reveal-right">
         <span class="green-tag">Grøn omstilling</span>
         <h2 id="groen-title" class="section-title" style="margin-top: 6px; margin-bottom: 18px;">Vi maler byen grøn</h2>
-        <p>Vores vision har siden 1947 været solidt håndværk, der udvikler sig i linje med samfundet. Det gælder også, når vi kører ud til opgaverne.</p>
-        <p>Derfor er elbilerne rykket ind i vognparken. Det er den samme maler, der møder op — bare uden udstødning i indkørslen.</p>
+        <p>Hos Malermester Hans Larsen ApS arbejder vi aktivt med grøn omstilling som en naturlig del af vores hverdag. Vi har fokus på at levere løsninger, der både er holdbare, ansvarlige og tilpasset fremtidens krav.</p>
         <ul class="green-points">
 %s
         </ul>
         <p class="green-quote">„Vi maler byen grøn — fordi vi værdsætter miljøet.”</p>
+        <a href="groen-omstilling.html" class="btn btn-groen" style="margin-top: 24px;">
+          Se hvordan vi arbejder med det
+          %s
+        </a>
       </div>
     </div>
   </div>
 </section>
-''' % (rev, img, alt, li)
+''' % (li, svg(IC_ARROW))
+
+
+def groen_list(items, ordered_note=''):
+    """Bulleted list in the green check style used on groen-omstilling.html."""
+    return ('        <ul class="green-points">\n'
+            + '\n'.join('          <li>%s<span>%s</span></li>'
+                        % (svg(IC_CHECK, 17, '2.5'), t) for t in items)
+            + '\n        </ul>')

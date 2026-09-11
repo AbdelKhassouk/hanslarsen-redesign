@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Write index.html, om-os.html and kontakt.html."""
+"""Write index.html, om-os.html, groen-omstilling.html and kontakt.html."""
 import io
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from partials import (SITE, TOPBAR, FOOTER, MAP_IFRAME, TEAM, svg, nav, head,
-                      team_section, contact_info_list, contact_cta, groen_section,
-                      hg_section, hg_strip,
+                      team_section, contact_info_list, contact_cta, groen_teaser,
+                      groen_list, hg_section, hg_strip,
                       IC_ARROW, IC_PHONE, IC_CHECK, IC_SHIELD, IC_HEART,
                       IC_USERS, IC_CHAT, IC_HANDSHAKE)
 
@@ -389,9 +389,7 @@ index_html = (
         '      </div>' % (svg(icon, 28, '2'), title, body)
         for icon, title, body in SERVICES)
     # ---- grøn omstilling -------------------------------------------------
-    + groen_section('images/elbil-bag.jpg',
-                    'Grøn elvarebil med teksten „Vi maler byen grøn — fordi vi værdsætter miljøet”',
-                    reverse=True)
+    + groen_teaser()
     # ---- team ------------------------------------------------------------
     + team_section(alt=False)
     # ---- kontakt ---------------------------------------------------------
@@ -611,7 +609,10 @@ omos_html = (
     <div class="prose-2col reveal">
       <p>Malerfirmaet Hans Larsen ApS er et af byens ældste malerfirmaer. Firmaet blev grundlagt helt tilbage i 1947 og bygger på nøjagtig samme vision som ved den spæde start: at sætte kunden i centrum med solidt håndværk, som udvikler sig i linje med samfundet.</p>
       <p>I dag drives firmaet med 70 malere af Malermester Morten Larsen, som har overtaget tøjlerne fra sin far, Malermester Hans Larsen.</p>
-      <p>De lokale opgaver varetages af konduktørerne Allan Christiansson og Rikke Mini Nielsen, mens Malermester Morten Larsen står for det øvrige.</p>
+      <p>Hos Malermester Hans Larsen ApS leverer vi kvalitetsmalerarbejde til både erhverv og private kunder. Vi har mange års erfaring i branchen og lægger stor vægt på faglig stolthed, præcision og godt samarbejde.</p>
+      <p>Vi arbejder med alt fra nybyggeri og renoveringer til vedligeholdelsesopgaver, og vi tilpasser altid vores løsninger til den enkelte opgave. For os handler det ikke kun om det færdige resultat – men også om processen undervejs. Derfor lægger vi vægt på god dialog, klare aftaler og overholdelse af deadline.</p>
+      <p>Vi er en del af Danske Malermestre og arbejder efter gældende standarder og krav i branchen. Samtidig har vi fokus på arbejdsmiljø og trivsel, så vores medarbejdere altid arbejder under gode og sikre forhold.</p>
+      <p>Hos os får du en samarbejdspartner, der tager ansvar – hele vejen fra første kontakt til afleveret arbejde.</p>
     </div>
   </div>
 </section>
@@ -641,10 +642,6 @@ omos_html = (
         for icon, title, body in VALUES)
     # ---- del af Håndverksgruppen ----------------------------------------
     + hg_section()
-    # ---- grøn omstilling -------------------------------------------------
-    + groen_section('images/elbil-front.jpg',
-                    'Malerfirmaet Hans Larsens hvide elvarebil set forfra',
-                    reverse=False)
     # ---- kundetyper ------------------------------------------------------
     + '''
 <!-- HVEM VI LØSER OPGAVER FOR -->
@@ -673,8 +670,17 @@ omos_html = (
   <div class="container">
     <div class="section-head reveal">
       <span class="section-tag">Arbejdsmiljø</span>
-      <h2 id="amo-title" class="section-title" style="margin-top: 8px;">Arbejdsmiljøorganisationen</h2>
-      <p class="amo-lead">Sammen arbejder vi for et trygt, sundt og sikkert arbejdsmiljø — hver dag for alle. Vores AMO består af to konduktører og to arbejdsmiljørepræsentanter, som du altid kan tage fat i.</p>
+      <h2 id="amo-title" class="section-title" style="margin-top: 8px;">Arbejdsmiljøorganisation (AMO)</h2>
+      <p class="amo-lead">Vi har en aktiv arbejdsmiljøorganisation (AMO), som arbejder systematisk med at sikre et godt og sikkert arbejdsmiljø for alle medarbejdere.</p>
+    </div>
+    <div class="amo-intro reveal">
+      <p>Arbejdsmiljøorganisationens opgave er blandt andet at forebygge arbejdsulykker og nedslidning, sikre gode arbejdsforhold på byggepladser, følge op på APV og løbende forbedringer samt skabe trivsel og dialog på tværs af organisationen.</p>
+      <p>Vi arbejder ud fra den tilgang, at et godt arbejdsmiljø er en forudsætning for høj kvalitet i det arbejde, vi leverer.</p>
+    </div>
+    <h3 class="amo-subhead reveal">Vores arbejdsmiljøteam</h3>
+    <div class="amo-intro reveal">
+      <p>Vores arbejdsmiljøorganisation består af engagerede medarbejdere fra virksomheden, som arbejder tæt sammen om at sikre et sikkert og sundt arbejdsmiljø i hverdagen.</p>
+      <p>Teamet består af både ledelses- og medarbejderrepræsentanter, som bidrager med input fra byggepladserne og sikrer løbende forbedringer.</p>
     </div>
     <div class="amo-roster reveal-stagger">
 %s
@@ -827,7 +833,198 @@ kontakt_html = (
 ''' % (contact_info_list(), contact_cta('kontakt-cta'), MAP_IFRAME)
     + FOOTER)
 
+# =================================================== GRØN OMSTILLING ======
+GROEN_LD = '''<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Grøn omstilling — Malermester Hans Larsen ApS",
+  "description": "Sådan arbejder Malermester Hans Larsen ApS med grøn omstilling: materialevalg dokumenteret med EPD, minimering af spild, affaldssortering og erfaring fra svanemærket og DGNB-certificeret byggeri.",
+  "url": "https://www.hanslarsen.dk/groen-omstilling/",
+  "about": {
+    "@type": "LocalBusiness",
+    "name": "Malerfirmaet Hans Larsen",
+    "url": "https://www.hanslarsen.dk/"
+  }
+}
+</script>
+'''
+
+# Reference projects, exactly as the client listed them. Only Stenlængegård
+# came with a qualifier -- anything else about these projects would be
+# invention, so the cards carry the name and nothing more.
+REFERENCER = [
+    ('DTU Hørsholm', ''),
+    ('Lyngby Storcenter / Comwell Hotel', ''),
+    ('Daginstitutionen Stenlængegård', 'Opført som svanemærket byggeri'),
+]
+
+GROEN_STYLE = '''
+<!-- Page-specific styles -->
+<style>
+.ref-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.ref-card {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-top: 3px solid var(--hg-green);
+  border-radius: 8px;
+  padding: 28px 26px;
+  transition: all 0.3s var(--transition);
+}
+.ref-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+.ref-card h3 {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+}
+.ref-icon {
+  color: #2E7D5B;
+  margin-bottom: 14px;
+}
+.ref-badge {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hg-green-dark);
+  background: rgba(100,162,2,0.1);
+  border-radius: 99px;
+  padding: 6px 12px;
+}
+
+@media (max-width: 960px) {
+  .ref-grid { grid-template-columns: 1fr; gap: 16px; }
+}
+</style>
+'''
+
+groen_html = (
+    head(
+        title='Grøn omstilling — Malermester Hans Larsen ApS | Næstved',
+        desc='Sådan arbejder Malermester Hans Larsen ApS med grøn omstilling: materialer med lavere miljøpåvirkning dokumenteret med EPD, minimering af spild, korrekt affaldssortering og erfaring fra svanemærket og DGNB-certificeret byggeri.',
+        keywords='grøn omstilling malerfirma, bæredygtigt malerarbejde, EPD maling, svanemærket byggeri maler, DGNB maler, miljøvenlig maler næstved',
+        canonical=SITE + '/groen-omstilling/',
+        og_title='Grøn omstilling — Malermester Hans Larsen ApS',
+        og_desc='Grøn omstilling handler for os ikke om enkeltstående tiltag, men om en ansvarlig tilgang i hele processen — fra materialevalg til udførelse og aflevering.',
+        extra_style=GROEN_STYLE, ld=GROEN_LD)
+    + TOPBAR
+    + nav('groen-omstilling.html')
+    + '''
+<main id="main">
+
+<section class="page-header">
+  <div class="container">
+    <span class="page-tag">Grøn omstilling</span>
+    <h1>Vi maler byen grøn</h1>
+    <p>Hos Malermester Hans Larsen ApS arbejder vi aktivt med grøn omstilling som en naturlig del af vores hverdag.</p>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section aria-labelledby="groen-intro-title">
+  <div class="container">
+    <div class="split">
+      <div class="split-media portrait reveal-left">
+        <img src="images/elbil-bag.jpg" alt="Grøn elvarebil med teksten „Vi maler byen grøn — fordi vi værdsætter miljøet”" loading="lazy" width="900" height="1200">
+        <div class="media-badge green">
+          <div class="num">EL</div>
+          <div class="label">Vognpark</div>
+        </div>
+      </div>
+      <div class="split-content reveal-right">
+        <span class="green-tag">Vores tilgang</span>
+        <h2 id="groen-intro-title" class="section-title" style="margin-top: 6px; margin-bottom: 18px;">Ansvarlige løsninger, der holder</h2>
+        <p>Vi har fokus på at levere løsninger, der både er holdbare, ansvarlige og tilpasset fremtidens krav.</p>
+        <p>Vi vælger, hvor det er muligt, materialer med lavere miljøpåvirkning og samarbejder med leverandører, der kan dokumentere deres produkter gennem f.eks. miljøvaredeklarationer (EPD). Samtidig har vi fokus på korrekt behandling og anvendelse af materialer, så både kvalitet og levetid optimeres.</p>
+        <p class="green-quote">„Vi maler byen grøn — fordi vi værdsætter miljøet.”</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HVAD VI LÆGGER VÆGT PÅ -->
+<section class="green-band" aria-labelledby="vaegt-title">
+  <div class="container">
+    <div class="split reverse">
+      <div class="split-media portrait reveal-right">
+        <img src="images/elbil-front.jpg" alt="Malermester Hans Larsens hvide elvarebil set forfra" loading="lazy" width="900" height="1200">
+      </div>
+      <div class="split-content reveal-left">
+        <span class="green-tag">I vores arbejde</span>
+        <h2 id="vaegt-title" class="section-title" style="margin-top: 6px; margin-bottom: 18px;">Det lægger vi vægt på</h2>
+%s
+        <h3 class="groen-subhead">I praksis betyder det, at vi</h3>
+%s
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REFERENCER -->
+<section aria-labelledby="ref-title">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="green-tag">Referencer</span>
+      <h2 id="ref-title" class="section-title" style="margin-top: 8px;">Projekter med høje krav til bæredygtighed</h2>
+      <p>Vi har erfaring fra projekter med høje krav til bæredygtighed, herunder:</p>
+    </div>
+    <div class="ref-grid reveal-stagger">
+%s
+    </div>
+    <p class="groen-note reveal">Vi arbejder desuden med dokumentation, der understøtter bæredygtige valg, herunder EPD-data og krav i forbindelse med DGNB-certificerede byggerier.</p>
+  </div>
+</section>
+
+<!-- AFRUNDING -->
+<section class="green-band compact" aria-labelledby="groen-slut-title">
+  <div class="container">
+    <div class="groen-closing reveal">
+      <h2 id="groen-slut-title">Ikke enkeltstående tiltag</h2>
+      <p>Grøn omstilling handler for os ikke om enkeltstående tiltag, men om en ansvarlig tilgang i hele processen – fra materialevalg til udførelse og aflevering.</p>
+      <a href="kontakt.html" class="btn btn-groen">
+        Tal med os om jeres projekt
+        %s
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+''' % (
+        groen_list([
+            'effektiv planlægning for at minimere spild og unødvendig transport',
+            'korrekt affaldssortering på byggepladser',
+            'anvendelse af produkter, der lever op til gældende miljøkrav',
+            'løbende udvikling af vores kompetencer',
+        ]),
+        groen_list([
+            'Rådgiver om materialevalg med fokus på miljø og holdbarhed',
+            'Planlægger arbejdet for at minimere spild',
+            'Sikrer korrekt udførelse i forhold til både kvalitet og miljø',
+        ]),
+        '\n'.join(
+            '      <div class="ref-card">\n'
+            '        %s\n'
+            '        <h3>%s</h3>\n'
+            '%s'
+            '      </div>' % (svg(IC_CHECK, 20, '2.5', 'ref-icon'), navn,
+                             '        <span class="ref-badge">%s</span>\n' % badge if badge else '')
+            for navn, badge in REFERENCER),
+        svg(IC_ARROW))
+    + FOOTER)
+
 print('Writing pages:')
 write('index.html', index_html)
 write('om-os.html', omos_html)
+write('groen-omstilling.html', groen_html)
 write('kontakt.html', kontakt_html)
