@@ -278,7 +278,7 @@ SERVICES = [
 ]
 
 STATS = [('1947', 'Grundlagt'), ('70', 'Malere ansat'),
-         ('2', 'Generationer'), ('EL', 'I vognparken')]
+         ('3', 'Generationer'), ('EL', 'I vognparken')]
 
 index_html = (
     head(
@@ -351,9 +351,9 @@ index_html = (
       </div>
       <div class="split-content reveal-right">
         <span class="section-tag">Velkommen</span>
-        <h2 id="about-title" class="section-title" style="margin-top: 6px; margin-bottom: 18px;">Solidt håndværk gennem to generationer</h2>
+        <h2 id="about-title" class="section-title" style="margin-top: 6px; margin-bottom: 18px;">Solidt håndværk gennem tre generationer</h2>
         <p>Malerfirmaet Hans Larsen ApS blev grundlagt i 1947 og bygger på samme vision som ved den spæde start: at sætte kunden i centrum med solidt håndværk, som udvikler sig i linje med samfundet.</p>
-        <p>I dag drives firmaet med 70 malere af Malermester Morten Larsen, som har overtaget tøjlerne fra sin far, Malermester Hans Larsen.</p>
+        <p>I dag drives firmaet med 70 malere af Malermester Morten Larsen. Han er tredje generation i familien — firmaet blev grundlagt af hans morfar, Malermester Hans Larsen.</p>
         <p>Den udvikling kan man se på vejen: elbilerne er rykket ind i vognparken.</p>
         <a href="om-os.html" class="btn btn-ghost" style="margin-top: 16px;">
           Læs mere om os
@@ -594,7 +594,7 @@ omos_html = (
   <div class="container">
     <div class="section-head reveal" style="margin-bottom: 32px;">
       <span class="section-tag">Historien</span>
-      <h2 id="historie-title" class="section-title" style="margin-top: 8px;">Solidt håndværk i to generationer</h2>
+      <h2 id="historie-title" class="section-title" style="margin-top: 8px;">Solidt håndværk i tre generationer</h2>
     </div>
     <figure class="photo-figure reveal">
       <div class="photo-band">
@@ -608,7 +608,7 @@ omos_html = (
     </figure>
     <div class="prose-2col reveal">
       <p>Malerfirmaet Hans Larsen ApS er et af byens ældste malerfirmaer. Firmaet blev grundlagt helt tilbage i 1947 og bygger på nøjagtig samme vision som ved den spæde start: at sætte kunden i centrum med solidt håndværk, som udvikler sig i linje med samfundet.</p>
-      <p>I dag drives firmaet med 70 malere af Malermester Morten Larsen, som har overtaget tøjlerne fra sin far, Malermester Hans Larsen.</p>
+      <p>I dag drives firmaet med 70 malere af Malermester Morten Larsen. Han er tredje generation i familien — firmaet blev grundlagt af hans morfar, Malermester Hans Larsen.</p>
       <p>Hos Malermester Hans Larsen ApS leverer vi kvalitetsmalerarbejde til både erhverv og private kunder. Vi har mange års erfaring i branchen og lægger stor vægt på faglig stolthed, præcision og godt samarbejde.</p>
       <p>Vi arbejder med alt fra nybyggeri og renoveringer til vedligeholdelsesopgaver, og vi tilpasser altid vores løsninger til den enkelte opgave. For os handler det ikke kun om det færdige resultat – men også om processen undervejs. Derfor lægger vi vægt på god dialog, klare aftaler og overholdelse af deadline.</p>
       <p>Vi er en del af Danske Malermestre og arbejder efter gældende standarder og krav i branchen. Samtidig har vi fokus på arbejdsmiljø og trivsel, så vores medarbejdere altid arbejder under gode og sikre forhold.</p>
