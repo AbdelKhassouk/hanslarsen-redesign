@@ -5,10 +5,12 @@ Statisk site. Ingen build, ingen afhængigheder — filerne kan uploades som de 
 
 FILER
 -----
-  index.html            Forside
-  om-os.html            Om os
-  groen-omstilling.html Grøn omstilling
-  kontakt.html          Kontakt
+  index.html              Forside
+  om-os.html              Om os
+  haandverksgruppen.html  Håndverksgruppen
+  groen-omstilling.html   Grøn omstilling
+  arbejdsmiljoe.html      Arbejdsmiljø (AMO)
+  kontakt.html            Kontakt
   styles.css            Styling (delt på alle sider)
   script.js             Menu, animationer, formular (delt på alle sider)
   hanslarsenlogo.png    Logo (sort tekst, transparent baggrund)
@@ -79,10 +81,10 @@ HÅNDVERKSGRUPPEN
 ----------------
 Firmaet er en del af Håndverksgruppen. Det står tre steder:
 
-  - Forsiden: en smal stribe under nøgletallene
-  - Om os:    sektionen "Håndverksgruppen" med kundens egen tekst
-              plus et faktakort med tal fra koncernen
-  - Footeren: "EN DEL AF"-logo på alle sider
+  - Egen side: haandverksgruppen.html med kundens egen tekst
+               plus et faktakort med tal fra koncernen
+  - Forsiden:  en smal stribe under nøgletallene
+  - Footeren:  "EN DEL AF"-logo på alle sider
 
 Logoet ligger i to udgaver:
   images/handverksgruppen.svg        til lys baggrund

@@ -157,9 +157,10 @@ nav.scrolled { padding: 12px 0; }
   align-items: center;
 }
 .nav-menu a {
-  padding: 10px 18px;
+  padding: 10px 13px;
   font-weight: 600;
   font-size: 14px;
+  white-space: nowrap;
   color: var(--gray-700);
   border-radius: 6px;
   position: relative;
@@ -194,6 +195,40 @@ nav.scrolled { padding: 12px 0; }
 .menu-toggle.active .icon-open { display: none; }
 .menu-toggle.active .icon-close { display: block; }
 
+/* Six menu items no longer fit beside the logo on a small laptop, so the
+   menu collapses into the toggle a good deal earlier than the rest of the
+   mobile layout does. */
+@media (max-width: 1040px) {
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 4px;
+    background: white;
+    box-shadow: var(--shadow);
+    padding: 12px;
+    border-top: 1px solid var(--gray-200);
+    align-items: stretch;
+  }
+  .nav-menu.open { display: flex; animation: slideDown 0.3s var(--transition); }
+  .nav-menu li { width: 100%; }
+  .nav-menu a {
+    display: block;
+    padding: 14px 18px;
+    border-radius: 6px;
+    text-align: left;
+  }
+  .nav-menu .nav-cta {
+    margin-left: 0 !important;
+    margin-top: 4px;
+    text-align: center !important;
+  }
+  .menu-toggle { display: flex; align-items: center; justify-content: center; }
+}
+
 /* ============ PAGE HEADER ============ */
 .page-header {
   background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
@@ -221,6 +256,9 @@ nav.scrolled { padding: 12px 0; }
   letter-spacing: -0.025em;
   line-height: 1.1;
   color: var(--black);
+  /* "Arbejdsmiljøorganisation" is one word and wider than a phone screen. */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 .page-header p {
   margin-top: 14px;
@@ -650,34 +688,6 @@ footer {
   .topbar-meta { display: none; }
   .topbar-malermestre { height: 22px; }
   
-  .nav-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    gap: 4px;
-    background: white;
-    box-shadow: var(--shadow);
-    padding: 12px;
-    border-top: 1px solid var(--gray-200);
-    align-items: stretch;
-  }
-  .nav-menu.open { display: flex; animation: slideDown 0.3s var(--transition); }
-  .nav-menu li { width: 100%; }
-  .nav-menu a {
-    display: block;
-    padding: 14px 18px;
-    border-radius: 6px;
-    text-align: left;
-  }
-  .nav-menu .nav-cta {
-    margin-left: 0 !important;
-    margin-top: 4px;
-    text-align: center !important;
-  }
-  .menu-toggle { display: flex; align-items: center; justify-content: center; }
   .logo-mark { width: 170px; height: 50px; }
   
   .page-header { padding: 56px 0; }
@@ -1320,4 +1330,54 @@ section.hg-band {
   font-size: 18px;
   font-weight: 800;
   letter-spacing: -0.01em;
+}
+
+/* ============ UNDERSIDER (kort der linker videre) ============ */
+.undersider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+.undersider-kort {
+  display: block;
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-top: 3px solid var(--red);
+  border-radius: 8px;
+  padding: 28px 26px;
+  transition: all 0.3s var(--transition);
+}
+.undersider-kort:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+  border-color: var(--red);
+}
+.undersider-kort h3 {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.undersider-kort p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--gray-700);
+  margin-bottom: 16px;
+}
+.undersider-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--red);
+}
+.undersider-kort:hover .undersider-link svg { transform: translateX(3px); }
+.undersider-link svg { transition: transform 0.25s var(--transition); }
+
+@media (max-width: 760px) {
+  .undersider-grid { grid-template-columns: 1fr; gap: 16px; }
 }

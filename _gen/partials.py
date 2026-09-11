@@ -224,13 +224,17 @@ def nav(active):
 %s
 %s
 %s
+%s
+%s
       <li><a href="kontakt.html" class="nav-cta">Få et tilbud</a></li>
     </ul>
   </div>
 </nav>
 ''' % (svg(IC_MENU, 24, cls='icon-open'), svg(IC_CLOSE, 24, cls='icon-close'),
        item('index.html', 'Forside'), item('om-os.html', 'Om os'),
+       item('haandverksgruppen.html', 'Håndverksgruppen'),
        item('groen-omstilling.html', 'Grøn omstilling'),
+       item('arbejdsmiljoe.html', 'Arbejdsmiljø'),
        item('kontakt.html', 'Kontakt'))
 
 
@@ -250,7 +254,9 @@ FOOTER = '''
         <ul class="footer-list">
           <li><a href="index.html">Forside</a></li>
           <li><a href="om-os.html">Om os</a></li>
+          <li><a href="haandverksgruppen.html">Håndverksgruppen</a></li>
           <li><a href="groen-omstilling.html">Grøn omstilling</a></li>
+          <li><a href="arbejdsmiljoe.html">Arbejdsmiljø</a></li>
           <li><a href="kontakt.html">Kontakt</a></li>
         </ul>
       </div>
@@ -306,8 +312,9 @@ HG_FACTS = [
 ]
 
 
-def hg_section():
-    """The full 'En del af Håndverksgruppen' section (Om os)."""
+def hg_body():
+    """Body of haandverksgruppen.html. The opening sentence lives in the page
+    header, so this picks up from the second paragraph."""
     facts = '\n'.join(
         '          <li>\n'
         '            <strong>%s</strong>\n'
@@ -315,13 +322,12 @@ def hg_section():
         '          </li>' % (num, label) for num, label in HG_FACTS)
     return '''
 <!-- HÅNDVERKSGRUPPEN -->
-<section class="hg-band" aria-labelledby="hg-title">
+<section aria-labelledby="hg-title">
   <div class="container">
     <div class="split">
       <div class="split-content reveal-left">
-        <span class="hg-tag">Del af en større koncern</span>
-        <h2 id="hg-title" class="section-title" style="margin-top: 6px; margin-bottom: 18px;">Håndverksgruppen</h2>
-        <p>Malermester Hans Larsen ApS er blevet en del af Håndverksgruppen, hvilket giver os mulighed for at kombinere vores stærke lokale forankring med fordelene ved at være en del af noget større.</p>
+        <span class="hg-tag">Hvad det betyder</span>
+        <h2 id="hg-title" class="section-title" style="margin-top: 6px; margin-bottom: 18px;">Fællesskab, udvikling og samarbejde</h2>
         <p>For os handler det ikke kun om størrelse, men om fællesskab, udvikling og samarbejde. Som en del af Håndverksgruppen får vi adgang til et stærkt netværk af faglige kompetencer, erfaringsudveksling og udviklingsmuligheder, som styrker både vores virksomhed og vores medarbejdere.</p>
         <p>Vi bevarer vores lokale identitet, værdier og tætte relation til kunderne, samtidig med at vi får sparring og støtte fra et fællesskab af virksomheder, der deler de samme høje ambitioner for kvalitet, arbejdsmiljø og faglig stolthed.</p>
         <p>For vores medarbejdere betyder det flere muligheder for uddannelse, kompetenceudvikling og videndeling på tværs af organisationen. For vores kunder betyder det en stærk samarbejdspartner med lokal nærhed, høj faglighed og adgang til ressourcer og erfaring fra et større fællesskab.</p>
@@ -345,6 +351,40 @@ def hg_section():
 ''' % (HG_URL, svg(IC_EXT, 13, '3'), facts)
 
 
+def undersider(aktuel):
+    """Cards linking to the three topic pages. Shown on Om os and on each
+    topic page, so the set is always reachable from any of them."""
+    sider = [
+        ('haandverksgruppen.html', 'Håndverksgruppen',
+         'Vi kombinerer stærk lokal forankring med fordelene ved at være en del af noget større.'),
+        ('groen-omstilling.html', 'Grøn omstilling',
+         'Ansvarlige materialevalg, mindre spild og erfaring fra svanemærket byggeri.'),
+        ('arbejdsmiljoe.html', 'Arbejdsmiljø',
+         'En aktiv AMO, der arbejder systematisk med et godt og sikkert arbejdsmiljø.'),
+    ]
+    kort = '\n'.join(
+        '      <a class="undersider-kort" href="%s">\n'
+        '        <h3>%s</h3>\n'
+        '        <p>%s</p>\n'
+        '        <span class="undersider-link">Læs mere %s</span>\n'
+        '      </a>' % (href, titel, tekst, svg(IC_ARROW, 13))
+        for href, titel, tekst in sider if href != aktuel)
+    return '''
+<!-- UNDERSIDER -->
+<section class="alt" aria-labelledby="undersider-title">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="section-tag">Læs også</span>
+      <h2 id="undersider-title" class="section-title" style="margin-top: 8px;">Mere om, hvordan vi arbejder</h2>
+    </div>
+    <div class="undersider-grid reveal-stagger">
+%s
+    </div>
+  </div>
+</section>
+''' % kort
+
+
 def hg_strip():
     """Compact one-line mention for the front page."""
     return '''
@@ -357,7 +397,7 @@ def hg_strip():
         <h2 id="hg-strip-title">En del af Håndverksgruppen</h2>
         <p>Vi kombinerer vores stærke lokale forankring med fordelene ved at være en del af noget større — et fællesskab af over 160 virksomheder i Norge, Sverige, Danmark og Tyskland.</p>
       </div>
-      <a href="om-os.html#hg-title" class="btn btn-hg">
+      <a href="haandverksgruppen.html" class="btn btn-hg">
         Læs mere
         %s
       </a>

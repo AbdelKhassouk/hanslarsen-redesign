@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Write index.html, om-os.html, groen-omstilling.html and kontakt.html."""
+"""Write the six static pages of hanslarsen.dk."""
 import io
 import os
 import sys
@@ -7,7 +7,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from partials import (SITE, TOPBAR, FOOTER, MAP_IFRAME, TEAM, svg, nav, head,
                       team_section, contact_info_list, contact_cta, groen_teaser,
-                      groen_list, hg_section, hg_strip,
+                      groen_list, hg_body, hg_strip, undersider,
                       IC_ARROW, IC_PHONE, IC_CHECK, IC_SHIELD, IC_HEART,
                       IC_USERS, IC_CHAT, IC_HANDSHAKE)
 
@@ -640,8 +640,6 @@ omos_html = (
         '        </div>\n'
         '      </div>' % (svg(icon, 20, '2'), title, body)
         for icon, title, body in VALUES)
-    # ---- del af Håndverksgruppen ----------------------------------------
-    + hg_section()
     # ---- kundetyper ------------------------------------------------------
     + '''
 <!-- HVEM VI LØSER OPGAVER FOR -->
@@ -663,51 +661,11 @@ omos_html = (
         '        <h3>%s</h3>\n'
         '        <p>%s</p>\n'
         '      </div>' % (num, title, body) for num, title, body in CUSTOMERS)
-    # ---- arbejdsmiljøorganisation ---------------------------------------
-    + '''
-<!-- ARBEJDSMILJØORGANISATION -->
-<section class="alt" aria-labelledby="amo-title">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="section-tag">Arbejdsmiljø</span>
-      <h2 id="amo-title" class="section-title" style="margin-top: 8px;">Arbejdsmiljøorganisation (AMO)</h2>
-      <p class="amo-lead">Vi har en aktiv arbejdsmiljøorganisation (AMO), som arbejder systematisk med at sikre et godt og sikkert arbejdsmiljø for alle medarbejdere.</p>
-    </div>
-    <div class="amo-intro reveal">
-      <p>Arbejdsmiljøorganisationens opgave er blandt andet at forebygge arbejdsulykker og nedslidning, sikre gode arbejdsforhold på byggepladser, følge op på APV og løbende forbedringer samt skabe trivsel og dialog på tværs af organisationen.</p>
-      <p>Vi arbejder ud fra den tilgang, at et godt arbejdsmiljø er en forudsætning for høj kvalitet i det arbejde, vi leverer.</p>
-    </div>
-    <h3 class="amo-subhead reveal">Vores arbejdsmiljøteam</h3>
-    <div class="amo-intro reveal">
-      <p>Vores arbejdsmiljøorganisation består af engagerede medarbejdere fra virksomheden, som arbejder tæt sammen om at sikre et sikkert og sundt arbejdsmiljø i hverdagen.</p>
-      <p>Teamet består af både ledelses- og medarbejderrepræsentanter, som bidrager med input fra byggepladserne og sikrer løbende forbedringer.</p>
-    </div>
-    <div class="amo-roster reveal-stagger">
-%s
-    </div>
-    <div class="amo-values reveal">
-%s
-    </div>
-    <figure class="amo-figure reveal">
-      <a href="images/amo-plakat.jpg" target="_blank" rel="noopener" aria-label="Åbn plakaten over arbejdsmiljøorganisationen i fuld størrelse">
-        <img src="images/amo-plakat.jpg" alt="Plakat over arbejdsmiljøorganisationen i Malermester Hans Larsen med Allan Christiansson, Rikke Mini Nielsen, Jacob Lundgren og Lars Nielsen" loading="lazy" width="1326" height="741">
-      </a>
-      <figcaption>Klik for at se plakaten i fuld størrelse.</figcaption>
-    </figure>
-  </div>
-</section>
-''' % ('\n'.join(
-        '      <div class="amo-person">\n'
-        '        <div class="navn">%s</div>\n'
-        '        <div class="rolle">%s</div>\n'
-        '      </div>' % (navn, rolle) for navn, rolle, _foto in AMO),
-       '\n'.join('      <span%s>%s%s</span>'
-                 % (' class="lead"' if i == 0 else '', svg(icon, 16, '2'), label)
-                 for i, (icon, label) in enumerate(AMO_VALUES)))
     # ---- team ------------------------------------------------------------
     + team_section(alt=False)
+    + undersider('om-os.html')
     + '''
-<section class="alt compact">
+<section class="compact">
   <div class="container">
     <div style="text-align: center;" class="reveal">
       <a href="kontakt.html" class="btn">
@@ -999,7 +957,6 @@ groen_html = (
   </div>
 </section>
 
-</main>
 ''' % (
         groen_list([
             'effektiv planlægning for at minimere spild og unødvendig transport',
@@ -1021,10 +978,154 @@ groen_html = (
                              '        <span class="ref-badge">%s</span>\n' % badge if badge else '')
             for navn, badge in REFERENCER),
         svg(IC_ARROW))
+    + undersider('groen-omstilling.html')
+    + '''
+</main>
+'''
+    + FOOTER)
+
+# ================================================== HÅNDVERKSGRUPPEN ======
+HG_LD = '''<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Håndverksgruppen — Malermester Hans Larsen ApS",
+  "description": "Malermester Hans Larsen ApS er en del af Håndverksgruppen — stærk lokal forankring kombineret med fordelene ved at være en del af noget større.",
+  "url": "https://www.hanslarsen.dk/haandverksgruppen/",
+  "about": {
+    "@type": "Organization",
+    "name": "Håndverksgruppen",
+    "url": "https://www.handverksgruppen.com/da/"
+  }
+}
+</script>
+'''
+
+hg_html = (
+    head(
+        title='Håndverksgruppen — Malermester Hans Larsen ApS | Næstved',
+        desc='Malermester Hans Larsen ApS er blevet en del af Håndverksgruppen. Vi bevarer vores lokale identitet og tætte relation til kunderne — og får adgang til et stærkt fagligt netværk.',
+        keywords='håndverksgruppen, malermester hans larsen håndverksgruppen, malerfirma koncern næstved, handverksgruppen danmark',
+        canonical=SITE + '/haandverksgruppen/',
+        og_title='Håndverksgruppen — Malermester Hans Larsen ApS',
+        og_desc='Stærk lokal forankring kombineret med fordelene ved at være en del af noget større.',
+        ld=HG_LD)
+    + TOPBAR
+    + nav('haandverksgruppen.html')
+    + '''
+<main id="main">
+
+<section class="page-header">
+  <div class="container">
+    <span class="page-tag">Del af en større koncern</span>
+    <h1>Håndverksgruppen</h1>
+    <p>Malermester Hans Larsen ApS er blevet en del af Håndverksgruppen, hvilket giver os mulighed for at kombinere vores stærke lokale forankring med fordelene ved at være en del af noget større.</p>
+  </div>
+</section>
+'''
+    + hg_body()
+    + undersider('haandverksgruppen.html')
+    + '''
+</main>
+'''
+    + FOOTER)
+
+# ===================================================== ARBEJDSMILJØ =======
+AMO_LD = '''<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Arbejdsmiljøorganisation (AMO) — Malermester Hans Larsen ApS",
+  "description": "Malermester Hans Larsen ApS har en aktiv arbejdsmiljøorganisation, som arbejder systematisk med at sikre et godt og sikkert arbejdsmiljø for alle medarbejdere.",
+  "url": "https://www.hanslarsen.dk/arbejdsmiljoe/",
+  "about": {
+    "@type": "LocalBusiness",
+    "name": "Malerfirmaet Hans Larsen",
+    "url": "https://www.hanslarsen.dk/"
+  }
+}
+</script>
+'''
+
+amo_html = (
+    head(
+        title='Arbejdsmiljø (AMO) — Malermester Hans Larsen ApS | Næstved',
+        desc='Vi har en aktiv arbejdsmiljøorganisation (AMO), som arbejder systematisk med at forebygge arbejdsulykker og nedslidning, sikre gode arbejdsforhold på byggepladser og skabe trivsel på tværs af organisationen.',
+        keywords='arbejdsmiljø malerfirma, AMO malerfirma, arbejdsmiljøorganisation næstved, APV malerfirma, sikkerhed byggeplads maler',
+        canonical=SITE + '/arbejdsmiljoe/',
+        og_title='Arbejdsmiljøorganisation (AMO) — Malermester Hans Larsen ApS',
+        og_desc='Et godt arbejdsmiljø er en forudsætning for høj kvalitet i det arbejde, vi leverer.',
+        ld=AMO_LD)
+    + TOPBAR
+    + nav('arbejdsmiljoe.html')
+    + '''
+<main id="main">
+
+<section class="page-header">
+  <div class="container">
+    <span class="page-tag">Arbejdsmiljø</span>
+    <h1>Arbejdsmiljøorganisation (AMO)</h1>
+    <p>Vi har en aktiv arbejdsmiljøorganisation (AMO), som arbejder systematisk med at sikre et godt og sikkert arbejdsmiljø for alle medarbejdere.</p>
+  </div>
+</section>
+
+<!-- OPGAVEN -->
+<section aria-labelledby="amo-opgave-title">
+  <div class="container">
+    <div class="section-head reveal" style="margin-bottom: 24px;">
+      <span class="section-tag">Opgaven</span>
+      <h2 id="amo-opgave-title" class="section-title" style="margin-top: 8px;">Systematisk arbejde med arbejdsmiljøet</h2>
+    </div>
+    <div class="amo-intro reveal">
+      <p>Arbejdsmiljøorganisationens opgave er blandt andet at forebygge arbejdsulykker og nedslidning, sikre gode arbejdsforhold på byggepladser, følge op på APV og løbende forbedringer samt skabe trivsel og dialog på tværs af organisationen.</p>
+      <p>Vi arbejder ud fra den tilgang, at et godt arbejdsmiljø er en forudsætning for høj kvalitet i det arbejde, vi leverer.</p>
+    </div>
+    <div class="amo-values reveal">
+%s
+    </div>
+  </div>
+</section>
+
+<!-- TEAMET -->
+<section class="alt" aria-labelledby="amo-team-title">
+  <div class="container">
+    <div class="section-head reveal" style="margin-bottom: 24px;">
+      <span class="section-tag">Vores arbejdsmiljøteam</span>
+      <h2 id="amo-team-title" class="section-title" style="margin-top: 8px;">Folkene i AMO</h2>
+    </div>
+    <div class="amo-intro reveal">
+      <p>Vores arbejdsmiljøorganisation består af engagerede medarbejdere fra virksomheden, som arbejder tæt sammen om at sikre et sikkert og sundt arbejdsmiljø i hverdagen.</p>
+      <p>Teamet består af både ledelses- og medarbejderrepræsentanter, som bidrager med input fra byggepladserne og sikrer løbende forbedringer.</p>
+    </div>
+    <div class="amo-roster reveal-stagger">
+%s
+    </div>
+    <figure class="amo-figure reveal">
+      <a href="images/amo-plakat.jpg" target="_blank" rel="noopener" aria-label="Åbn plakaten over arbejdsmiljøorganisationen i fuld størrelse">
+        <img src="images/amo-plakat.jpg" alt="Plakat over arbejdsmiljøorganisationen i Malermester Hans Larsen med Allan Christiansson, Rikke Mini Nielsen, Jacob Lundgren og Lars Nielsen" loading="lazy" width="1326" height="741">
+      </a>
+      <figcaption>Klik for at se plakaten i fuld størrelse.</figcaption>
+    </figure>
+  </div>
+</section>
+''' % ('\n'.join('      <span%s>%s%s</span>'
+                 % (' class="lead"' if i == 0 else '', svg(icon, 16, '2'), label)
+                 for i, (icon, label) in enumerate(AMO_VALUES)),
+       '\n'.join(
+        '      <div class="amo-person">\n'
+        '        <div class="navn">%s</div>\n'
+        '        <div class="rolle">%s</div>\n'
+        '      </div>' % (navn, rolle) for navn, rolle, _foto in AMO))
+    + undersider('arbejdsmiljoe.html')
+    + '''
+</main>
+'''
     + FOOTER)
 
 print('Writing pages:')
 write('index.html', index_html)
 write('om-os.html', omos_html)
+write('haandverksgruppen.html', hg_html)
 write('groen-omstilling.html', groen_html)
+write('arbejdsmiljoe.html', amo_html)
 write('kontakt.html', kontakt_html)

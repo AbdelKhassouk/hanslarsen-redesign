@@ -9,8 +9,17 @@ uploades direkte til webserveren, som de ligger.
 |---|---|
 | Forside | [index.html](index.html) |
 | Om os | [om-os.html](om-os.html) |
+| Håndverksgruppen | [haandverksgruppen.html](haandverksgruppen.html) |
 | Grøn omstilling | [groen-omstilling.html](groen-omstilling.html) |
+| Arbejdsmiljø (AMO) | [arbejdsmiljoe.html](arbejdsmiljoe.html) |
 | Kontakt | [kontakt.html](kontakt.html) |
+
+Håndverksgruppen, Grøn omstilling og Arbejdsmiljø har hver sin side, som
+kunden bad om. De krydslinker til hinanden gennem "Læs også"-kortene
+nederst, og de står alle i menuen og i footeren.
+
+Menuen klapper sammen til hamburger-ikonet allerede ved 1040 px — seks
+punkter kan ikke stå ved siden af logoet på en mindre bærbar.
 
 ## Hvad er nyt
 
@@ -49,9 +58,9 @@ jer; den skal ikke gættes.
 
 ## En del af Håndverksgruppen
 
-Firmaet er en del af **Håndverksgruppen**. Det står tre steder: en stribe på
-forsiden, en fuld sektion på "Om os", og et logo i footeren på alle sider.
-Brødteksten er kundens egen, ordret.
+Firmaet er en del af **Håndverksgruppen**. Det har sin egen side, plus en
+stribe på forsiden og et logo i footeren på alle sider. Brødteksten er
+kundens egen, ordret.
 
 > Navnet staves **Håndverksgruppen** med *v* — det er koncernens egen
 > stavemåde, også på deres danske sider.
