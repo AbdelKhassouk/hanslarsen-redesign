@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """Write the six static pages of hanslarsen.dk."""
+import argparse
 import io
 import os
+import re
+import shutil
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -14,10 +17,49 @@ from partials import (SITE, TOPBAR, FOOTER, MAP_IFRAME, TEAM, svg, nav, head,
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def write(name, html):
-    path = os.path.join(ROOT, name)
+# ------------------------------------------------------------- output ---
+# Pages are authored with flat links (om-os.html, styles.css) and rewritten
+# on the way out. The live WordPress site serves /om-os/ and /kontakt/, and
+# Google has those indexed, so every page is emitted as <slug>/index.html.
+PAGES = {
+    'index.html': '',
+    'om-os.html': 'om-os',
+    'haandverksgruppen.html': 'haandverksgruppen',
+    'groen-omstilling.html': 'groen-omstilling',
+    'arbejdsmiljoe.html': 'arbejdsmiljoe',
+    'kontakt.html': 'kontakt',
+}
+
+_ATTR = re.compile(r'''(\b(?:href|src)=")([^"]*)(")''')
+_CSS_URL = re.compile(r'''(url\(\s*['"]?)([^'")]+)(['"]?\s*\))''')
+_EXTERNAL = re.compile(r'^(?:[a-z][a-z0-9+.-]*:|//|#)', re.I)
+
+
+def relink_url(url, prefix, asset_prefix=None):
+    """Point one local URL at the right place from a page `prefix` deep.
+    Assets can live somewhere else than pages (the WordPress plugin)."""
+    if not url or _EXTERNAL.match(url) or url.startswith('{{'):
+        return url
+    path, sep, frag = url.partition('#')
+    if path in PAGES:
+        slug = PAGES[path]
+        out = prefix + (slug + '/' if slug else '')
+        return (out or './') + sep + frag
+    return (prefix if asset_prefix is None else asset_prefix) + url
+
+
+def relink(html, prefix, asset_prefix=None):
+    fix = lambda m: m.group(1) + relink_url(m.group(2), prefix, asset_prefix) + m.group(3)
+    return _CSS_URL.sub(fix, _ATTR.sub(fix, html))
+
+
+def write(out_dir, rel_path, html):
+    path = os.path.join(out_dir, rel_path)
+    d = os.path.dirname(path)
+    if d:
+        os.makedirs(d, exist_ok=True)
     io.open(path, 'w', encoding='utf-8', newline='\n').write(html)
-    print('  %-16s %6.1f KB' % (name, os.path.getsize(path) / 1024))
+    print('  %-32s %6.1f KB' % (rel_path.replace(os.sep, '/'), os.path.getsize(path) / 1024))
 
 
 # =========================================================== FORSIDE ======
@@ -1122,10 +1164,199 @@ amo_html = (
 '''
     + FOOTER)
 
-print('Writing pages:')
-write('index.html', index_html)
-write('om-os.html', omos_html)
-write('haandverksgruppen.html', hg_html)
-write('groen-omstilling.html', groen_html)
-write('arbejdsmiljoe.html', amo_html)
-write('kontakt.html', kontakt_html)
+# =============================================================== 404 ======
+notfound_html = (
+    head(
+        title='Siden findes ikke — Malerfirmaet Hans Larsen',
+        desc='Siden findes ikke. Gå til forsiden af Malerfirmaet Hans Larsen i Næstved.',
+        keywords='',
+        canonical=SITE + '/',
+        og_title='Siden findes ikke — Malerfirmaet Hans Larsen',
+        og_desc='Siden findes ikke.')
+    .replace('<meta name="robots" content="index, follow">', '<meta name="robots" content="noindex">')
+    + TOPBAR
+    + nav(None)
+    + '''
+<main id="main">
+
+<section class="page-header">
+  <div class="container">
+    <span class="page-tag">404</span>
+    <h1>Siden findes ikke</h1>
+    <p>Siden er måske flyttet, da vi fik ny hjemmeside. Prøv en af siderne herunder — eller ring til os på <a href="tel:+4555723586" style="color: var(--red); font-weight: 700;">55 72 35 86</a>.</p>
+    <p style="margin-top: 26px;">
+      <a href="index.html" class="btn">
+        Gå til forsiden
+        %s
+      </a>
+    </p>
+  </div>
+</section>
+'''  % svg(IC_ARROW)
+    + undersider('')
+    + '''
+</main>
+'''
+    + FOOTER)
+
+
+# ========================================================== .htaccess ======
+# Production only (Curanet webhotel, LiteSpeed). It replaces the WordPress
+# .htaccess -- the deploy script backs that one up first.
+HTACCESS = r'''# =========================================================================
+#  Malerfirmaet Hans Larsen — statisk hjemmeside
+#
+#  Denne fil erstatter WordPress' .htaccess. Den gamle ligger i backuppen,
+#  som deploy-scriptet tog, før den blev skiftet ud.
+#
+#  WordPress ligger stadig på serveren som nødplan, men er lukket ned
+#  udadtil herunder. Rul tilbage ved at lægge den gamle .htaccess på plads.
+# =========================================================================
+
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+<IfModule mod_headers.c>
+  # Same HSTS policy the WordPress site sent. The domain asks to be on the
+  # preload list, so it must never answer over plain HTTP.
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # --- One address: https://www.hanslarsen.dk (unchanged from WordPress) --
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://www.hanslarsen.dk%{REQUEST_URI} [R=301,L,NE]
+
+  RewriteCond %{HTTP_HOST} ^hanslarsen\.dk$ [NC]
+  RewriteRule ^ https://www.hanslarsen.dk%{REQUEST_URI} [R=301,L,NE]
+
+  # --- WordPress addresses that no longer exist ---------------------------
+  RewriteRule ^hello-world/?$ / [R=301,L]
+  RewriteRule ^(category|author|tag)/ / [R=301,L]
+  RewriteRule ^(comments/)?feed/?$ / [R=301,L]
+  RewriteRule ^wp-sitemap.*\.xml$ /sitemap.xml [R=301,L]
+
+  # --- Preview links (om-os.html) that were shared before launch ----------
+  RewriteRule ^(om-os|kontakt|haandverksgruppen|groen-omstilling|arbejdsmiljoe)\.html$ /$1/ [R=301,L]
+
+  # --- Retired WordPress: files kept as fallback, doors closed ------------
+  # An unmaintained WordPress 6.3 must not be reachable from the internet.
+  RewriteCond %{THE_REQUEST} \s/+index\.php[\s?/] [NC]
+  RewriteRule ^index\.php$ / [R=301,L]
+  RewriteRule ^wp-[a-z-]+\.php$ - [F,L]
+  RewriteRule ^(xmlrpc\.php|readme\.html|license\.txt)$ - [F,L]
+  RewriteRule ^(wp-admin|wp-json)(/|$) - [F,L]
+  RewriteRule ^(wp-content|wp-includes)/.*\.php$ - [F,L]
+</IfModule>
+'''
+
+PREVIEW_BASE = '/hanslarsen-redesign/'
+ASSETS = ['styles.css', 'script.js', 'hanslarsenlogo.png', 'robots.txt', 'sitemap.xml']
+PLUGIN_SLUG = 'hanslarsen-site'
+
+
+def all_pages():
+    return [('index.html', index_html), ('om-os.html', omos_html),
+            ('haandverksgruppen.html', hg_html), ('groen-omstilling.html', groen_html),
+            ('arbejdsmiljoe.html', amo_html), ('kontakt.html', kontakt_html)]
+
+
+def emit_wp_plugin(out_root):
+    """WordPress plugin that serves the site in place of the theme. URLs are
+    left as placeholders the plugin fills in from home_url()/plugins_url(),
+    so it works on any domain or subdirectory -- including a staging copy."""
+    import zipfile
+    plug = os.path.join(out_root, PLUGIN_SLUG)
+    site = os.path.join(plug, 'site')
+    os.makedirs(site)
+    for src_name, html in all_pages() + [('404', notfound_html)]:
+        slug = PAGES.get(src_name, '')
+        rel = '404.html' if src_name == '404' else (os.path.join(slug, 'index.html') if slug else 'index.html')
+        write(site, rel, relink(html, '{{HLS_HOME}}', '{{HLS_ASSETS}}'))
+    for name in ASSETS:
+        shutil.copy2(os.path.join(ROOT, name), os.path.join(site, name))
+    shutil.copytree(os.path.join(ROOT, 'images'), os.path.join(site, 'images'))
+    src = os.path.join(ROOT, '_gen', 'wp-plugin')
+    for name in os.listdir(src):
+        shutil.copy2(os.path.join(src, name), os.path.join(plug, name))
+    # An empty index.php in every folder stops directory listings on hosts
+    # that allow them -- the usual WordPress convention.
+    for d, _dirs, _names in os.walk(plug):
+        guard = os.path.join(d, 'index.php')
+        if not os.path.exists(guard):
+            io.open(guard, 'w', encoding='utf-8', newline='\n').write('<?php\n// Silence is golden.\n')
+
+    zpath = os.path.join(out_root, PLUGIN_SLUG + '.zip')
+    with zipfile.ZipFile(zpath, 'w', zipfile.ZIP_DEFLATED) as z:
+        for d, _dirs, names in os.walk(plug):
+            for n in sorted(names):
+                full = os.path.join(d, n)
+                z.write(full, os.path.relpath(full, out_root).replace(os.sep, '/'))
+    print('  %-32s %6.1f KB' % (PLUGIN_SLUG + '.zip', os.path.getsize(zpath) / 1024))
+
+
+def emit(out_dir, base, preview):
+    for src_name, html in all_pages():
+        slug = PAGES[src_name]
+        if preview:
+            # The GitHub copy must not compete with hanslarsen.dk in Google.
+            html = html.replace('<meta name="robots" content="index, follow">',
+                                '<meta name="robots" content="noindex">')
+        rel = os.path.join(slug, 'index.html') if slug else 'index.html'
+        write(out_dir, rel, relink(html, '../' if slug else ''))
+
+    # A 404 is served at whatever depth the missing URL had, so relative
+    # links would break -- this one page links from the site root.
+    write(out_dir, '404.html', relink(notfound_html, base))
+
+    if preview:
+        # Old flat preview links keep working.
+        for src_name, slug in PAGES.items():
+            if not slug:
+                continue
+            write(out_dir, src_name,
+                  '<!DOCTYPE html>\n<html lang="da"><head><meta charset="UTF-8">\n'
+                  '<title>Siden er flyttet</title>\n'
+                  '<meta name="robots" content="noindex">\n'
+                  '<link rel="canonical" href="%s/%s/">\n'
+                  '<meta http-equiv="refresh" content="0; url=%s/">\n'
+                  '</head><body><a href="%s/">Siden er flyttet</a></body></html>\n'
+                  % (SITE, slug, slug, slug))
+    else:
+        for name in ASSETS:
+            shutil.copy2(os.path.join(ROOT, name), os.path.join(out_dir, name))
+        shutil.copytree(os.path.join(ROOT, 'images'), os.path.join(out_dir, 'images'))
+        write(out_dir, '.htaccess', HTACCESS)
+
+
+if __name__ == '__main__':
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--prod', action='store_true',
+                    help='build dist/ for www.hanslarsen.dk instead of the GitHub preview')
+    ap.add_argument('--wp-plugin', action='store_true',
+                    help='build dist-wp/hanslarsen-site.zip, a WordPress plugin serving the site')
+    args = ap.parse_args()
+
+    if args.wp_plugin:
+        out = os.path.join(ROOT, 'dist-wp')
+        if os.path.isdir(out):
+            shutil.rmtree(out)
+        os.makedirs(out)
+        print('Building WordPress plugin -> dist-wp/')
+        emit_wp_plugin(out)
+    elif args.prod:
+        out = os.path.join(ROOT, 'dist')
+        if os.path.isdir(out):
+            shutil.rmtree(out)
+        os.makedirs(out)
+        print('Building production site -> dist/')
+        emit(out, '/', preview=False)
+    else:
+        print('Building GitHub preview -> repo root')
+        emit(ROOT, PREVIEW_BASE, preview=True)

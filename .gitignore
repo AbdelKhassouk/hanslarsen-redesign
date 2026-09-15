@@ -1,3 +1,7 @@
 _preview/
 __pycache__/
 *.pyc
+dist/
+dist-wp/
+_backup/
+.deploy-env

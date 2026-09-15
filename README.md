@@ -2,17 +2,30 @@
 
 Preview: **https://abdelkhassouk.github.io/hanslarsen-redesign/**
 
-Statisk site — tre sider, ingen build, ingen afhængigheder. Filerne kan
-uploades direkte til webserveren, som de ligger.
+Statisk site på seks sider, bygget fra `_gen/` med `python _gen/build.py`.
 
-| Side | Fil |
+> **Skal siden på hanslarsen.dk?** Følg [deploy/SKIFT-TIL-NY-SIDE.md](deploy/SKIFT-TIL-NY-SIDE.md).
+> Upload aldrig filerne fra repo-roden — de er GitHub-preview'et og har `noindex`.
+
+| Side | Adresse |
 |---|---|
-| Forside | [index.html](index.html) |
-| Om os | [om-os.html](om-os.html) |
-| Håndverksgruppen | [haandverksgruppen.html](haandverksgruppen.html) |
-| Grøn omstilling | [groen-omstilling.html](groen-omstilling.html) |
-| Arbejdsmiljø (AMO) | [arbejdsmiljoe.html](arbejdsmiljoe.html) |
-| Kontakt | [kontakt.html](kontakt.html) |
+| Forside | `/` |
+| Om os | `/om-os/` |
+| Håndverksgruppen | `/haandverksgruppen/` |
+| Grøn omstilling | `/groen-omstilling/` |
+| Arbejdsmiljø (AMO) | `/arbejdsmiljoe/` |
+| Kontakt | `/kontakt/` |
+
+Siderne ligger som mapper (`om-os/index.html`), så adresserne er de samme,
+som WordPress-siden brugte, og som Google allerede kender.
+
+## Tre byggemål
+
+| Kommando | Mål | Bruges til |
+|---|---|---|
+| `python _gen/build.py` | repo-roden | GitHub-preview'et (`noindex`) |
+| `python _gen/build.py --prod` | `dist/` | FTP-upload til webhotellet |
+| `python _gen/build.py --wp-plugin` | `dist-wp/hanslarsen-site.zip` | WordPress-plugin |
 
 Håndverksgruppen, Grøn omstilling og Arbejdsmiljø har hver sin side, som
 kunden bad om. De krydslinker til hinanden gennem "Læs også"-kortene
@@ -77,11 +90,11 @@ har sit eget direkte nummer på sit kort.
 
 ## Rediger teamet
 
-Medarbejderne står på alle tre sider og skal være ens. Ret dem ét sted:
+Medarbejderne står på flere sider og skal være ens. Ret dem ét sted:
 
 ```
 1. Ret listen TEAM i _gen/partials.py
-2. python _gen/build.py
+2. python _gen/build.py                  (og --prod / --wp-plugin ved næste deploy)
 ```
 
 Se [readme.txt](readme.txt) for detaljer, herunder hvad der skal gøres,
@@ -89,5 +102,6 @@ når de nye fotos er taget.
 
 ## Bemærk
 
-`.nojekyll` og denne README er kun til GitHub Pages-previewet og kan
-slettes, når siden lægges op på hanslarsen.dk.
+`.nojekyll`, stub-filerne `om-os.html` m.fl. og denne README hører kun til
+GitHub-preview'et. Produktionsbygget i `dist/` og plugin-zip'en indeholder
+dem ikke.

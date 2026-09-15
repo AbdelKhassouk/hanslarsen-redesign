@@ -35,7 +35,8 @@ FILER
 
 SÅDAN TESTER DU LOKALT
 ----------------------
-Dobbeltklik på index.html virker, men brug helst en lille server:
+Siderne ligger i mapper (om-os/index.html), så brug en lille server —
+dobbeltklik på index.html kan ikke følge links til mapper:
 
     cd hanslarsen
     python -m http.server 8000
@@ -45,7 +46,7 @@ Dobbeltklik på index.html virker, men brug helst en lille server:
 
 SÅDAN RETTER DU TEAMET
 ----------------------
-Medarbejderne står tre steder (forside, om-os, kontakt) og skal være ens.
+Medarbejderne står flere steder (forside, om-os, kontakt) og skal være ens.
 Derfor findes der en lille generator:
 
   1. Ret listen TEAM øverst i _gen/partials.py
@@ -56,7 +57,7 @@ Derfor findes der en lille generator:
   3. index.html, om-os.html og kontakt.html er nu opdateret
 
 Vil du hellere rette i hånden, kan du det — HTML'en er helt almindelig.
-Husk så at rette alle tre sider.
+Husk så at rette alle sider, der viser teamet.
 
 
 NÅR DE NYE BILLEDER ER TAGET
@@ -114,5 +115,10 @@ Forsiden har en kort teaser, der linker videre til siden.
 
 SÅDAN LÆGGER DU DEN ONLINE
 --------------------------
-Upload alle filer og mapper til roden af webserveren. Alle stier er
-relative, så der skal ikke rettes noget.
+Se deploy/SKIFT-TIL-NY-SIDE.md.
+
+UPLOAD ALDRIG FILERNE FRA DENNE MAPPE DIREKTE. De er GitHub-preview'et og
+beder Google om ikke at indeksere siden. Brug i stedet:
+
+  python _gen/build.py --wp-plugin   ->  dist-wp/hanslarsen-site.zip   (via WordPress)
+  python _gen/build.py --prod        ->  dist/                          (via FTP)
