@@ -23,8 +23,14 @@ Gamle WordPress-adresser (`/hello-world/`, `/author/admin/`, `/feed/`,
 Den nye side lægges ind som et plugin. Når det er slået til, viser WordPress
 den nye side i stedet for det gamle tema. **Fortryd = "Deaktivér".**
 
-Testet på WordPress 6.3.10 (samme version som hanslarsen.dk) på PHP 7.4 og
-8.2: 84 tjek, alle grønne, inkl. at alt er identisk med før efter deaktivering.
+Testet på WordPress 6.3.10 (samme version som hanslarsen.dk) med de samme
+fire plugins som produktionen, på PHP 7.4 og 8.2: 116 tjek, alle grønne, inkl.
+at alt er identisk med før efter deaktivering.
+
+Før go-live blev de fire produktions-plugins gennemgået kode for kode. Det fandt
+én blokerende fejl i version 1.0.0: WordPress selv sender `hanslarsen.dk` videre
+til `www`, og pluginet sprang det over. Rettet i **1.0.1**. `wp.py` nægter at
+aktivere en ældre version.
 
 ### 0. Tag en backup
 Selvom intet slettes: tag en backup i Curanet-panelet eller med et
@@ -36,6 +42,10 @@ wp-admin → **Plugins → Tilføj nyt → Upload plugin** → vælg
     dist-wp/hanslarsen-site.zip
 
 → **Installer nu**. Stop der. Klik *ikke* "Aktivér plugin".
+
+Ligger der allerede en ældre version, siger WordPress at pluginet er
+installeret — klik **Erstat den nuværende med den uploadede** (*Replace current
+with uploaded*).
 
 (Zip'en bygges med `python _gen/build.py --wp-plugin`.)
 
@@ -53,6 +63,10 @@ Filen er git-ignoreret og kommer aldrig på GitHub.
     HL_WP_APP_PASSWORD=abcd efgh ijkl mnop qrst uvwx
 
 ### 4. Skift
+**Hav en fane åben, hvor du er logget ind i wp-admin**, mens der skiftes.
+Limit Login Attempts låser login efter fire forkerte forsøg, men en session der
+allerede er logget ind, bliver ikke ramt — så kan du altid nå "Deaktivér".
+
     python deploy/wp.py status             # tjekker login og at pluginet ligger der
     python deploy/wp.py activate           # tørkørsel
     python deploy/wp.py activate --yes     # skifter
@@ -65,17 +79,28 @@ sider, hvert billede, stylesheet og link, redirect-kæden fra
 ### Fortryd
     python deploy/wp.py deactivate --yes
 
-— eller wp-admin → Plugins → **Deaktivér** ved "Hans Larsen — ny hjemmeside".
-Pluginet tømmer LiteSpeed-/sidecache ved både til og fra, så skiftet ses med
-det samme.
+— eller gå direkte til **https://www.hanslarsen.dk/wp-admin/** → Plugins →
+**Deaktivér** ved "Hans Larsen — ny hjemmeside". Pluginet tømmer
+LiteSpeed-/sidecache ved både til og fra, så skiftet ses med det samme.
+
+Log ind med den *normale* adgangskode. Applikationsadgangskoden virker ikke på
+login-siden, og hvert forsøg med den tæller som et forkert login.
 
 ### Se den gamle side, mens den nye er aktiv
 Logget ind som administrator: tilføj `?hls-gammel` til en adresse, fx
 `https://www.hanslarsen.dk/?hls-gammel`. Besøgende ser altid den nye side.
 
 ### Bagefter
+- Tag en ny backup i **All-in-One WP Migration** og kald den "ny hjemmeside".
+  En gendannelse af en ældre backup slår den nye side fra igen.
 - Tilbagekald applikationsadgangskoden (samme sted som den blev oprettet).
 - Google Search Console → Sitemaps → indsend `https://www.hanslarsen.dk/sitemap.xml`.
+
+### Godt at vide, mens den nye side er aktiv
+- **Under Construction kan ikke skjule den nye side.** Skal der vises en
+  vedligeholdelses-side, så deaktivér "Hans Larsen — ny hjemmeside" først.
+- **Rør ikke Indstillinger → HTTPS Redirection.** Gemmer man der, skriver
+  pluginet hele `.htaccess` om — og det er den, der sender http til https.
 
 ---
 

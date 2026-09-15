@@ -29,6 +29,7 @@ import base64
 import io
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -40,6 +41,22 @@ import checks  # noqa: E402
 
 PLUGIN = 'hanslarsen-site/hanslarsen-site'
 ZIP = os.path.join(os.path.dirname(HERE), 'dist-wp', 'hanslarsen-site.zip')
+SOURCE = os.path.join(os.path.dirname(HERE), '_gen', 'wp-plugin', 'hanslarsen-site.php')
+THEME_MARKER = '/wp-content/themes/'
+
+
+def expected_version():
+    """Version in the plugin source -- the one the zip was built from."""
+    m = re.search(r'^\s*\*\s*Version:\s*(\S+)', io.open(SOURCE, encoding='utf-8').read(), re.M)
+    return m.group(1) if m else None
+
+
+def old_site_is_back(body, before):
+    """WordPress' theme is showing again. Requiring the theme marker (when the
+    page had one before) keeps a coming-soon page from passing as "back"."""
+    if checks.is_new_site(body):
+        return False
+    return THEME_MARKER in body if THEME_MARKER in before else True
 
 
 def say(msg=''):
@@ -47,9 +64,11 @@ def say(msg=''):
 
 
 def load_env():
-    path = os.path.join(HERE, '.deploy-env')
-    if os.path.isfile(path):
-        for line in io.open(path, encoding='utf-8'):
+    # deploy/.deploy-env or .deploy-env in the repo root -- both are git-ignored.
+    for path in (os.path.join(HERE, '.deploy-env'), os.path.join(os.path.dirname(HERE), '.deploy-env')):
+        if not os.path.isfile(path):
+            continue
+        for line in io.open(path, encoding='utf-8-sig'):
             line = line.strip()
             if line and not line.startswith('#') and '=' in line:
                 k, v = line.split('=', 1)
@@ -74,9 +93,14 @@ class WP:
             headers={'Authorization': self.auth, 'Content-Type': 'application/json',
                      'User-Agent': 'hanslarsen-deploy'})
         try:
-            with urllib.request.urlopen(req, timeout=60) as r:
+            # Never follow redirects: urllib would quietly resend a POST as a
+            # GET, and the plugin status would never change.
+            with urllib.request.build_opener(checks._NoRedirect).open(req, timeout=60) as r:
                 return r.status, json.loads(r.read().decode('utf-8') or 'null')
         except urllib.error.HTTPError as e:
+            if 300 <= e.code < 400:
+                return e.code, {'message': 'WordPress omdirigerede til %s — brug præcis %s'
+                                % (checks.header(dict(e.headers or {}), 'Location'), checks.CANONICAL)}
             raw = (e.read() or b'').decode('utf-8', 'replace')
             try:
                 return e.code, json.loads(raw)
@@ -165,6 +189,12 @@ def cmd_activate(args, wp):
     p = wp.plugin()
     if not p:
         sys.exit('Pluginet er ikke uploadet. Upload %s i wp-admin først.' % os.path.relpath(ZIP))
+    want = expected_version()
+    if want and p['version'] != want:
+        sys.exit('Den uploadede version er %s, men den nye er %s.\n'
+                 'Upload %s igen i wp-admin (Plugins -> Tilføj nyt -> Upload plugin ->\n'
+                 '"Erstat den nuværende med den uploadede") og lad den være inaktiv.'
+                 % (p['version'], want, os.path.relpath(ZIP)))
     site = args.site_url.rstrip('/') if args.site_url else wp.url
     strict = not args.local
     say('Plugin:   %s %s (%s)' % (p['name'], p['version'], p['status']))
@@ -197,10 +227,14 @@ def cmd_activate(args, wp):
     for c in crit:
         say('   ' + c)
     status, data = wp.set_status(False)
-    back = wait_until(lambda: not checks.is_new_site(checks.get(checks.bust(site + '/'))[2]))
+    if status != 200 or data.get('status') != 'inactive':
+        say('KUNNE IKKE SLÅ PLUGINET FRA (%s): %s' % (status, data.get('message', data)))
+        say('Gør det NU i wp-admin: Plugins -> "Hans Larsen — ny hjemmeside" -> Deaktivér')
+        return 4
+    back = wait_until(lambda: old_site_is_back(checks.get(checks.bust(site + '/'))[2], before))
     s, _h, _b = checks.get(checks.bust(site + '/'))
-    say('Deaktiveret (%s). Forsiden: HTTP %s, %s' % (
-        status, s, 'den gamle side er tilbage' if back else 'TJEK MANUELT I WP-ADMIN'))
+    say('Deaktiveret. Forsiden: HTTP %s, %s' % (
+        s, 'den gamle side er tilbage' if back else 'TJEK FORSIDEN MANUELT FRA ET ANDET NETVÆRK'))
     if s != before_status:
         say('ADVARSEL: forsiden svarede HTTP %s før og HTTP %s nu.' % (before_status, s))
     return 3
@@ -219,9 +253,9 @@ def cmd_deactivate(args, wp):
         say('TØRKØRSEL — kør igen med --yes for at vise WordPress-siden igen.')
         return 0
     status, data = wp.set_status(False)
-    if status != 200:
+    if status != 200 or data.get('status') != 'inactive':
         say('Kunne ikke deaktivere (%s): %s' % (status, data.get('message', data)))
-        say('Gør det i wp-admin under Plugins.')
+        say('Gør det i wp-admin: Plugins -> "Hans Larsen — ny hjemmeside" -> Deaktivér')
         return 2
     site = args.site_url.rstrip('/') if args.site_url else wp.url
     back = wait_until(lambda: not checks.is_new_site(checks.get(checks.bust(site + '/'))[2]))
@@ -243,6 +277,8 @@ def main(argv=None):
     if args.cmd == 'check' and args.site_url:
         return cmd_check(args)
     url, user, pw = load_env()
+    if not args.local and not url.startswith('https://'):
+        sys.exit('HL_WP_URL skal starte med https:// — applikationsadgangskoden sendes med hver forespørgsel.')
     wp = WP(url, user, pw)
     return {'status': cmd_status, 'check': cmd_check, 'activate': cmd_activate,
             'deactivate': cmd_deactivate}[args.cmd](args, wp)

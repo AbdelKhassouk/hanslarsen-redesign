@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Hans Larsen — ny hjemmeside
  * Description:       Viser den nye hjemmeside for Malerfirmaet Hans Larsen i stedet for WordPress-temaet. WordPress, temaet og indholdet bliver liggende urørt — deaktivér pluginet, så er den gamle side tilbage med det samme.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 5.5
  * Requires PHP:      7.0
  * License:           GPL-2.0-or-later
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'HLS_VERSION', '1.0.0' );
+define( 'HLS_VERSION', '1.0.1' );
 define( 'HLS_SITE_DIR', __DIR__ . '/site/' );
 
 /**
@@ -61,6 +61,27 @@ function hls_is_head() {
 function hls_redirect( $to ) {
 	wp_redirect( $to, 301, 'Hans Larsen' );
 	exit;
+}
+
+/**
+ * Send hanslarsen.dk/... to www.hanslarsen.dk/... (or the reverse, whichever
+ * home_url() uses). Mirrors redirect_canonical(): only a www / no-www
+ * difference is corrected, so unrelated host names are left alone.
+ */
+function hls_canonical_host() {
+	$home = wp_parse_url( home_url( '/' ) );
+	if ( empty( $home['host'] ) || empty( $_SERVER['HTTP_HOST'] ) ) {
+		return;
+	}
+	$want = strtolower( $home['host'] );
+	$got  = strtolower( preg_replace( '/:\d+$/', '', (string) $_SERVER['HTTP_HOST'] ) );
+	if ( $got === $want || ( 'www.' . $got !== $want && 'www.' . $want !== $got ) ) {
+		return;
+	}
+	$base = ( isset( $home['scheme'] ) ? $home['scheme'] : 'https' ) . '://' . $home['host']
+		. ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
+	$uri  = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '/';
+	hls_redirect( $base . $uri );
 }
 
 /**
@@ -124,15 +145,37 @@ function hls_route() {
 		return;
 	}
 
+	// This hook runs before WordPress' own redirect_canonical (priority 10),
+	// which is what sends hanslarsen.dk to www.hanslarsen.dk on production.
+	// Do the same www/no-www swap here -- and only that, like core.
+	hls_canonical_host();
+
 	list( $path, $trailing ) = hls_request_path();
 	$routes = hls_routes();
 	$home   = home_url( '/' );
+
+	// Core's shortcuts to the login screen and dashboard stay WordPress' job:
+	// they are how someone finds the "Deaktivér" button in a hurry.
+	if ( in_array( $path, array( 'login', 'admin', 'dashboard' ), true ) ) {
+		return;
+	}
 
 	if ( isset( $routes[ $path ] ) ) {
 		if ( '' !== $path && ! $trailing ) {
 			hls_redirect( $home . $path . '/' . hls_query_suffix() );
 		}
 		hls_render( $routes[ $path ], 200 );
+	}
+
+	// WordPress looks pages up case-insensitively (/Om-Os/ answered 200).
+	// Keep those links working, but on one canonical address.
+	$lower = strtolower( $path );
+	if ( $lower !== $path && isset( $routes[ $lower ] ) ) {
+		hls_redirect( $home . ( '' === $lower ? '' : $lower . '/' ) . hls_query_suffix() );
+	}
+
+	if ( 'index.php' === $path ) {
+		hls_redirect( $home . hls_query_suffix() );
 	}
 
 	if ( 'robots.txt' === $path ) {

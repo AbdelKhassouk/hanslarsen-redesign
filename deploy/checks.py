@@ -89,6 +89,11 @@ def run(site, mode, strict=True, say=print, sleep=time.sleep):
         else:
             crit.append('%s -> %s (ny side ikke fundet)' % (p, info))
 
+    # Browsers block http:// stylesheets and scripts on an https page.
+    mixed = sorted(p for p, b in bodies.items() if re.search(r'http://(www\.)?hanslarsen\.dk', b))
+    if mixed:
+        crit.append('http://-links til hanslarsen.dk (mixed content) på: %s' % ', '.join(mixed))
+
     # Every stylesheet, script, image and internal link on every page.
     checked = {}
     for p, body in bodies.items():
@@ -124,6 +129,14 @@ def run(site, mode, strict=True, say=print, sleep=time.sleep):
             say('   ok   http://hanslarsen.dk/ -> %s (%d hop)' % (url, hops))
         else:
             crit.append('http://hanslarsen.dk/ ender på %s (HTTP %s) efter %d hop' % (url, status, hops))
+        # A deep link on the bare domain must land on www in one hop -- WordPress
+        # core did that before, and the plugin now has to.
+        s, h, _b = get('https://hanslarsen.dk/om-os/', follow=False)
+        target = header(h, 'Location')
+        if s == 301 and target == CANONICAL + '/om-os/':
+            say('   ok   https://hanslarsen.dk/om-os/ -> www')
+        else:
+            crit.append('https://hanslarsen.dk/om-os/ gav %s -> %s (forventet 301 til www)' % (s, target or '-'))
         s, h, _b = get(site + '/', follow=False)
         (say('   ok   HSTS-header bevaret') if 'max-age=31536000' in header(h, 'Strict-Transport-Security')
          else warn.append('HSTS-header mangler på forsiden'))
@@ -134,6 +147,13 @@ def run(site, mode, strict=True, say=print, sleep=time.sleep):
     s, _h, b = get(site + '/findes-ikke-%d/' % time.time(), follow=False)
     (say('   ok   egen 404-side') if s == 404 and 'Siden findes ikke' in b
      else warn.append('404-siden: HTTP %s' % s))
+    if mode == 'wp':
+        s, h, _b = get(site + '/admin', follow=False)
+        (say('   ok   /admin fører stadig til wp-admin') if s in (301, 302) and 'wp-' in header(h, 'Location')
+         else warn.append('/admin gav %s, forventet omdirigering til wp-admin' % s))
+    s, h, _b = get(site + '/index.php', follow=False)
+    (say('   ok   /index.php -> forsiden') if s == 301 and header(h, 'Location').rstrip('/') == site
+     else warn.append('/index.php gav %s -> %s' % (s, header(h, 'Location') or '-')))
     if mode == 'ftp':
         s, _h, _b = get(site + '/wp-login.php', follow=False)
         (say('   ok   WordPress-login lukket') if s == 403

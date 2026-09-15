@@ -50,9 +50,11 @@ def say(msg=''):
 
 # ------------------------------------------------------------ config ------
 def load_env():
-    path = os.path.join(HERE, '.deploy-env')
-    if os.path.isfile(path):
-        for line in io.open(path, encoding='utf-8'):
+    # deploy/.deploy-env or .deploy-env in the repo root -- both are git-ignored.
+    for path in (os.path.join(HERE, '.deploy-env'), os.path.join(os.path.dirname(HERE), '.deploy-env')):
+        if not os.path.isfile(path):
+            continue
+        for line in io.open(path, encoding='utf-8-sig'):
             line = line.strip()
             if not line or line.startswith('#') or '=' not in line:
                 continue
